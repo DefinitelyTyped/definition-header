@@ -1,0 +1,1 @@
+// Definitions: https://github.com/borisyankov/DefinitelyTyped

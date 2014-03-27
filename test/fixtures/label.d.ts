@@ -1,0 +1,1 @@
+// Type definitions for FooModule 0.1.23
