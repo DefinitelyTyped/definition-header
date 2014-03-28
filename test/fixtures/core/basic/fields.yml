@@ -4,10 +4,10 @@
       name: "FooModule"
       version: "0.1.23"
     project:
-      url: " http://foo.org/"
+      url: "http://foo.org/"
     authors:
       -
         name: "Jimmy Foo"
         url: "https://github.xyz/x/foo/"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

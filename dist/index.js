@@ -45,7 +45,7 @@ var parsers;
     var authorSeperator = P.string(', ');
 
     /* tslint:enable:max-line-length:*/
-    parsers.label = comment.skip(space).skip(P.string('Type definitions for')).skip(optColon).skip(space).then(id).then(function (n) {
+    parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).then(function (n) {
         return space.then(semver).or(P.succeed(null)).map(function (v) {
             var ret = {
                 name: n,
@@ -55,21 +55,21 @@ var parsers;
         });
     });
 
-    parsers.project = comment.then(space).then(P.string('Project')).skip(optColon).skip(space).then(uriLib).map(function (u) {
+    parsers.project = comment.then(space).then(P.string('Project')).then(colon).then(space).then(uriLib).map(function (u) {
         var ret = {
             url: u
         };
         return ret;
     });
 
-    parsers.authors = comment.then(space).then(P.string('Definitions by')).skip(colon).skip(space).then(authorElem).then(function (a) {
+    parsers.authors = comment.then(space).then(P.string('Definitions by')).then(colon).then(space).then(authorElem).then(function (a) {
         return authorSeperator.then(authorElem).many().or(P.succeed([])).map(function (arr) {
             arr.unshift(a);
             return arr;
         });
     });
 
-    parsers.repo = comment.then(space).then(P.string('Definitions')).skip(colon).skip(space).then(uriLib).map(function (u) {
+    parsers.repo = comment.then(space).then(P.string('Definitions')).then(colon).then(space).then(uriLib).map(function (u) {
         var ret = {
             url: u
         };
@@ -81,7 +81,7 @@ var parsers;
             label: arr[0],
             project: arr[1],
             authors: arr[2],
-            repo: arr[3]
+            repository: arr[3]
         };
         return ret;
     }).skip(P.all);
@@ -91,4 +91,16 @@ function parse(source) {
     return parsers.header.parse(source);
 }
 exports.parse = parse;
+
+function serialise(header) {
+    var ret = [];
+    ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
+    ret.push('// Project: ' + header.project.url);
+    ret.push('// Definitions by: ' + header.authors.map(function (author) {
+        return author.name + (author.url ? ' <' + author.url + '>' : '');
+    }).join(', '));
+    ret.push('// Definitions: ' + header.repository.url);
+    return ret;
+}
+exports.serialise = serialise;
 //# sourceMappingURL=index.js.map

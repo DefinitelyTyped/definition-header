@@ -91,7 +91,7 @@ declare module Parsimmon {
 	/*
 	 accepts a function that returns a parser, which is evaluated the first time the parser is used. This is useful for referencing parsers that haven't yet been defined.
 	 */
-	export function lazy(f): Parser;
+	export function lazy(f: () => Parser): Parser;
 
 	/*
 	 fail paring with a message

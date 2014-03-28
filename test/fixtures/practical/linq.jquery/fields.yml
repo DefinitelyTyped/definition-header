@@ -9,5 +9,5 @@
       - 
         name: "neuecc"
         url: "http://www.codeplex.com/site/users/view/neuecc"
-    repos:
+    repository:
       url:  ""

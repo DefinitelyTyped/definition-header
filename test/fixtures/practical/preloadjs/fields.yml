@@ -9,5 +9,5 @@
       - 
         name: "Pedro Ferreira"
         url: "https://bitbucket.org/drk4"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

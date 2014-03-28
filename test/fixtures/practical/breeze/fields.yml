@@ -12,5 +12,5 @@
       - 
         name: "IdeaBlade"
         url: "https://github.com/IdeaBlade/Breeze"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

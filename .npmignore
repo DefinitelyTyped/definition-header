@@ -29,7 +29,8 @@
 .editorconfig
 
 /tscommand*
-
+ignoreBaseDirFile.*
+.tscache
 tmp/
 
 /*.tgz

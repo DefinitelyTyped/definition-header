@@ -10,5 +10,5 @@
       - 
         name: "aleksey-bykov"
         url: "https://github.com/aleksey-bykov"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

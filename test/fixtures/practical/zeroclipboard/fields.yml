@@ -12,5 +12,5 @@
       - 
         name: "Blake Niemyjski"
         url: "https://github.com/niemyjski"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

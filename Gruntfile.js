@@ -28,7 +28,7 @@ module.exports = function (grunt) {
 		},
 		ts: {
 			options: {
-				fast: false,
+				fast: true,
 				target: 'es5',
 				module: 'commonjs',
 				sourcemap: true,
@@ -37,6 +37,9 @@ module.exports = function (grunt) {
 				verbose: true
 			},
 			index: {
+				options: {
+					noImplicitAny: true
+				},
 				src: ['src/index.ts'],
 				outDir: 'dist/'
 			},

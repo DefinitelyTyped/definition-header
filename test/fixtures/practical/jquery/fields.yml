@@ -39,5 +39,5 @@
       - 
         name: "John Reilly"
         url: "https://github.com/johnnyreilly"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

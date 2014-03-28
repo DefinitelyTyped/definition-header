@@ -9,5 +9,5 @@
       - 
         name: "Morosinotto Daniele"
         url: "https://github.com/dmorosinotto/"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

@@ -8,5 +8,5 @@
     authors: 
       - 
         name: "Marcin Najder"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

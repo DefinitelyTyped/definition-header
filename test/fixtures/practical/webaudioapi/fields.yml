@@ -12,5 +12,5 @@
       - 
         name: "Kon"
         url: "http://phyzkit.net"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

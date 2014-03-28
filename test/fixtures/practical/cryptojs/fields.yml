@@ -9,5 +9,5 @@
       - 
         name: "Gia Bảo @ Sân Đình"
         url: "https://github.com/giabao"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

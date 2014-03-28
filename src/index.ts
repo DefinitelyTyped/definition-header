@@ -10,7 +10,7 @@ export interface Header {
 	label: Label;
 	project: Project;
 	authors: Author[];
-	repo: Repo;
+	repository: Repository;
 }
 
 export interface Label {
@@ -27,7 +27,7 @@ export interface Author {
 	url: string;
 }
 
-export interface Repo {
+export interface Repository {
 	url: string;
 }
 
@@ -72,8 +72,8 @@ module parsers {
 	/* tslint:enable:max-line-length:*/
 
 	export var label = comment
-		.skip(space)
-		.skip(P.string('Type definitions for')).skip(optColon).skip(space)
+		.then(space)
+		.then(P.string('Type definitions for')).then(optColon).then(space)
 		.then(id)
 		.then((n) => {
 			return space.then(semver).or(P.succeed(null)).map((v) => {
@@ -87,9 +87,9 @@ module parsers {
 
 	export var project = comment
 		.then(space)
-		.then(P.string('Project')).skip(optColon).skip(space)
+		.then(P.string('Project')).then(colon).then(space)
 		.then(uriLib).map((u) => {
-			var ret: Project =  {
+			var ret: Project = {
 				url: u
 			};
 			return ret;
@@ -97,7 +97,7 @@ module parsers {
 
 	export var authors = comment
 		.then(space)
-		.then(P.string('Definitions by')).skip(colon).skip(space)
+		.then(P.string('Definitions by')).then(colon).then(space)
 		.then(authorElem).then((a) => {
 			return authorSeperator.then(authorElem).many().or(P.succeed([])).map((arr) => {
 				arr.unshift(a);
@@ -107,9 +107,9 @@ module parsers {
 
 	export var repo = comment
 		.then(space)
-		.then(P.string('Definitions')).skip(colon).skip(space)
+		.then(P.string('Definitions')).then(colon).then(space)
 		.then(uriLib).map((u) => {
-			var ret: Repo =  {
+			var ret: Repository = {
 				url: u
 			};
 			return ret;
@@ -127,7 +127,7 @@ module parsers {
 				label: arr[0],
 				project: arr[1],
 				authors: arr[2],
-				repo: arr[3]
+				repository: arr[3]
 			};
 			return ret;
 		})
@@ -136,4 +136,15 @@ module parsers {
 
 export function parse(source: string): Header {
 	return parsers.header.parse(source);
+}
+
+export function serialise(header: Header): string[] {
+	var ret: string[] = [];
+	ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
+	ret.push('// Project: ' + header.project.url);
+	ret.push('// Definitions by: ' + header.authors.map((author) => {
+		return author.name + (author.url ? ' <' + author.url + '>' : '');
+	}).join(', '));
+	ret.push('// Definitions: ' + header.repository.url);
+	return ret;
 }

@@ -9,5 +9,5 @@
       - 
         name: "François de Campredon"
         url: "https://github.com/fdecampredon"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

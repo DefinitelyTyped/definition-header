@@ -9,5 +9,5 @@
       - 
         name: "Josh Baldwin"
         url: "https://github.com/jbaldwin"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

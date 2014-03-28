@@ -10,11 +10,16 @@ import DH = require('definition-header');
 
 'use strict';
 
+var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 var yaml = require('js-yaml');
 var sms = require('source-map-support');
 sms.install();
 
 var definitionHeader: typeof DH = require('../../dist/index');
+
+var DiffFormatter = require('unfunk-diff').DiffFormatter;
+var style = require('ministyle').ansi();
+var formatter = new DiffFormatter(style, 80);
 
 var fs = {
 	readFile: Promise.promisify(fsori.readFile),
@@ -32,7 +37,9 @@ var fs = {
 	stat: Promise.promisify(fsori.stat)
 };
 
-console.log('hah');
+function getDiff() {
+
+}
 
 var baseDir = './test/fixtures';
 
@@ -80,7 +87,6 @@ function getTests(base): Promise<any[]> {
 
 function runTests(tests): Promise<any[]> {
 	return Promise.map(tests, (test: any) => {
-		console.log(test.name);
 		return Promise.all([
 			fs.readUTF8(path.join(test.full, 'header.txt')),
 			fs.readYaml(path.join(test.full, 'fields.yml'))
@@ -89,11 +95,13 @@ function runTests(tests): Promise<any[]> {
 			try {
 				var h = definitionHeader.parse(source);
 				result = {
+					pass: isDeepEqual(h, fields.parsed),
 					header: h
 				};
 			}
 			catch (e) {
 				result = {
+					pass: (typeof fields.valid !== 'undefined' && fields.valid === false) ? true : false,
 					error: e
 				};
 			}
@@ -108,24 +116,49 @@ function runTests(tests): Promise<any[]> {
 }
 
 getTests(baseDir).then((groups) => {
-	console.log('---');
+	var dirs = ['core', 'debug', 'practical'];
+
 	return Promise.all(groups.filter((group) => {
-		return group.name === 'core';
+		return dirs.indexOf(group.name) > -1;
 	}).map((group) => {
-		return runTests(group.tests).then((result) => {
+		return runTests(group.tests).then((results) => {
 			return {
 				group: group,
-				results: result
+				failed: results.reduce((memo, res) => {
+					return memo + (res.result.pass ? 0 : 1);
+				}, 0),
+				results: results
 			};
 		});
 	}));
-}).then((res: any[]) => {
-	console.log('---');
-	console.log(util.inspect(res, false, 10));
-	console.log('');
-	console.log('hoop!');
-	return res;
+}).then((reports: any[]) => {
+	// console.log(util.inspect(reports, false, 10));
+
+	reports.forEach((report) => {
+		console.log('');
+		console.log(report.group.name);
+		console.log('   passed %d of %d', report.results.length - report.failed, report.results.length);
+		console.log('');
+		if (report.failed > 0) {
+			report.results.filter(res => !res.result.pass).forEach((res) => {
+				console.log(res.test.group + '/' + res.test.name);
+				console.log('---');
+				if (res.result.header) {
+					console.log(formatter.getStyledDiff(res.fields.parsed, res.result.header));
+					console.log('---');
+				}
+				if (res.result.error) {
+					console.log(res.result.error);
+					console.log('---');
+				}
+			});
+		}
+	});
+	if (!reports.every(report => report.failed === 0)) {
+		process.exit(1);
+	}
+	console.log('done!');
 }).catch((e) => {
 	console.log(e);
-	process.exit(1);
+	process.exit(2);
 });

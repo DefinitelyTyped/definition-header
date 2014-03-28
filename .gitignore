@@ -9,8 +9,10 @@
 /test/tmp
 
 /tscommand*
-/*.tgz
+ignoreBaseDirFile.*
+.tscache
 
+/*.tgz
 tmp/
 dump/
 

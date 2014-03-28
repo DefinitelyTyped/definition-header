@@ -9,5 +9,5 @@
       - 
         name: "Boris Yankov"
         url: "https://github.com/borisyankov"
-    repos:
+    repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

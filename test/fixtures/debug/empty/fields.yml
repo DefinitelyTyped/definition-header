@@ -1,4 +1,5 @@
 ---
+  valid: false
   parsed:
     label:
       name: null
@@ -6,5 +7,5 @@
     project:
       url: null
     authors: []
-    repos:
+    repository:
       url: null
