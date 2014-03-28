@@ -35,7 +35,7 @@
 		"no-string-literal": false,
 		"no-trailing-whitespace": true,
 		"no-unreachable": true,
-		"no-unused-variable": true,
+		"no-unused-variable": false,
 		"no-use-before-declare": true,
 		"x__one-line": [true,
 			"check-catch",
@@ -73,7 +73,7 @@
 				"variableDeclarator": "nospace"
 			}
 		],
-		"use-strict": [true,
+		"use-strict": [false,
 			"check-module",
 			"check-function"
 		],

@@ -322,9 +322,11 @@ declare class Promise<R> implements Promise.Thenable<R> {
 	 */
 	static try<R>(fn: () => Promise.Thenable<R>, args?: any[], ctx?: any): Promise<R>;
 	static try<R>(fn: () => R, args?: any[], ctx?: any): Promise<R>;
+	static try(fn: () => void, args?: any[], ctx?: any): Promise<void>;
 
 	static attempt<R>(fn: () => Promise.Thenable<R>, args?: any[], ctx?: any): Promise<R>;
 	static attempt<R>(fn: () => R, args?: any[], ctx?: any): Promise<R>;
+	static attempt(fn: () => void, args?: any[], ctx?: any): Promise<void>;
 
 	/**
 	 * Returns a new function that wraps the given function `fn`. The new function will always return a promise that is fulfilled with the original functions return values or rejected with thrown exceptions from the original function.

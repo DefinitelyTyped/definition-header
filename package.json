@@ -6,10 +6,10 @@
     "typescript",
     "definition"
   ],
-  "homepage": "https://github.com/DefinitelyTyped/defintion-header",
+  "homepage": "https://github.com/DefinitelyTyped/definition-header",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DefinitelyTyped/defintion-header.git"
+    "url": "https://github.com/DefinitelyTyped/definition-header.git"
   },
   "author": {
     "name": "Bart van der Schoor",
@@ -18,11 +18,11 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://raw.github.com/DefinitelyTyped/defintion-header/master/LICENSE-MIT.txt"
+      "url": "https://raw.github.com/DefinitelyTyped/definition-header/master/LICENSE-MIT.txt"
     }
   ],
   "bugs": {
-    "url": "https://github.com/DefinitelyTyped/defintion-header/issues"
+    "url": "https://github.com/DefinitelyTyped/definition-header/issues"
   },
   "engines": {
     "node": ">= 0.10.0"
@@ -31,10 +31,12 @@
   "scripts": {
     "test": "grunt test"
   },
+  "typescript": {
+    "definition": "./dist/index.d.ts"
+  },
   "dependencies": {
-    "parsimmon": "^0.3.1",
-    "typescript": "^0.9.7",
-    "xregexp": "^2.0.0"
+    "parsimmon": "~0.3.1",
+    "xregexp": "~2.0.0"
   },
   "devDependencies": {
     "source-map-support": "~0.2.5",
@@ -43,13 +45,16 @@
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-copy": "~0.4.1",
     "typescript": "0.9.7",
-    "grunt-ts": "^1.9.1",
+    "grunt-ts": "~1.9.1",
     "grunt-tslint": "~0.4.1",
     "tslint-path-formatter": "~0.1.0",
     "grunt-mocha-test": "~0.10.0",
     "mocha-unfunk-reporter": "~0.4.0",
     "chai": "~1.9.0",
     "chai-fs": "~0.0.3",
-    "grunt-shell": "^0.6.4"
+    "grunt-shell": "~0.6.4",
+    "glob": "~3.2.9",
+    "js-yaml": "~3.0.2",
+    "grunt-wrap": "^0.3.0"
   }
 }

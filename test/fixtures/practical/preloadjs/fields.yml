@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "PreloadJS"
+      version: "0.4.1"
+    project:
+      url:  "http://www.createjs.com/#!/PreloadJS"
+    authors: 
+      - 
+        name: "Pedro Ferreira"
+        url: "https://bitbucket.org/drk4"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"

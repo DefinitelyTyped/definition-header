@@ -1,1 +1,0 @@
-// Project: http://foo.org/

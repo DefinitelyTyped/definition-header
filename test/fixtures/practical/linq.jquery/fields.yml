@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "linq.jquery"
+      version: null
+    project:
+      url:  "http://linqjs.codeplex.com"
+    authors: 
+      - 
+        name: "neuecc"
+        url: "http://www.codeplex.com/site/users/view/neuecc"
+    repos:
+      url:  ""

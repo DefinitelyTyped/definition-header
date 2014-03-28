@@ -1,0 +1,43 @@
+---
+  parsed:
+    label:
+      name: "jQuery"
+      version: "1.10"
+    description: ""
+    project:
+      url:  "http://jquery.com"
+    authors: 
+      - 
+        name: "Boris Yankov"
+        url: "https://github.com/borisyankov"
+      - 
+        name: "Christian Hoffmeister"
+        url: "https://github.com/choffmeister"
+      - 
+        name: "Diullei Gomes"
+        url: "https://github.com/Diullei"
+      - 
+        name: "Jason Swearingen"
+      - 
+        name: "Guus Goossens"
+        url: "https://github.com/Guuz"
+      - 
+        name: "Basarat Ali Syed"
+        url: "https://github.com/basarat"
+      - 
+        name: "Derek Cicerone"
+        url: "https://github.com/derekcicerone"
+      - 
+        name: "rew Gaspar"
+        url: "https://github.com/AndrewGaspar"
+      - 
+        name: "Seikichi Kondo"
+        url: "https://github.com/seikichi"
+      - 
+        name: "Poul Sorensen"
+        url: "https://github.com/s093294"
+      - 
+        name: "John Reilly"
+        url: "https://github.com/johnnyreilly"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"

@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "Async"
+      version: "0.1"
+    project:
+      url:  "https://github.com/caolan/async"
+    authors: 
+      - 
+        name: "Boris Yankov"
+        url: "https://github.com/borisyankov"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"

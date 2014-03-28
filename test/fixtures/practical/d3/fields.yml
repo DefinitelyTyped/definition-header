@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "d3JS"
+      version: null
+    project:
+      url:  "http://d3js.org"
+    authors: 
+      - 
+        name: "Boris Yankov"
+        url: "https://github.com/borisyankov"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"

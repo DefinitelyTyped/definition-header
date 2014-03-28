@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "yui 3.14.0"
+      version: "3.14.0"
+    project:
+      url:  "https://github.com/yui/yui3"
+    authors: 
+      - 
+        name: "Gia Bảo @ Sân Đình"
+        url: "https://github.com/giabao"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"

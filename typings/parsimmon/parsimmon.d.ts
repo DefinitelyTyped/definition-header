@@ -84,9 +84,9 @@ declare module Parsimmon {
 	export function succeed(result: any): Parser;
 
 	/*
-	 accepts an array of parsers that it expects to find in order, yielding an array of the results.
+	 accepts a variable number of parsers that it expects to find in order, yielding an array of the results.
 	 */
-	export function seq(parsers: Parser[]): Parser;
+	export function seq(...parsers: Parser[]): Parser;
 
 	/*
 	 accepts a function that returns a parser, which is evaluated the first time the parser is used. This is useful for referencing parsers that haven't yet been defined.

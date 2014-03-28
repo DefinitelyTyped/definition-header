@@ -1,0 +1,13 @@
+---
+  parsed:
+    label:
+      name: "expect.js 0.2.0"
+      version: "0.2.0"
+    project:
+      url:  "https://github.com/LearnBoost/expect.js"
+    authors: 
+      - 
+        name: "Teppei Sato"
+        url: "https://github.com/teppeis"
+    repos:
+      url:  "https://github.com/borisyankov/DefinitelyTyped"
