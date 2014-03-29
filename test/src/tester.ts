@@ -12,6 +12,7 @@ import DH = require('definition-header');
 
 var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 var yaml = require('js-yaml');
+var exit = require('exit');
 var sms = require('source-map-support');
 sms.install();
 
@@ -156,10 +157,11 @@ getTests(baseDir).then((groups) => {
 		}
 	});
 	if (!reports.every(report => report.failed === 0)) {
-		process.exit(1);
+		exit(1);
 	}
 	console.log('done!');
+	exit(0);
 }).catch((e) => {
 	console.log(e);
-	process.exit(2);
+	exit(2);
 });
