@@ -32,6 +32,7 @@
     "test": "grunt test"
   },
   "typescript": {
+    "main": "./src/index.ts",
     "definition": "./dist/index.d.ts"
   },
   "dependencies": {

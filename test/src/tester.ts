@@ -144,13 +144,14 @@ getTests(baseDir).then((groups) => {
 				console.log(res.test.group + '/' + res.test.name);
 				console.log('---');
 				if (res.result.header) {
-					console.log(formatter.getStyledDiff(res.fields.parsed, res.result.header));
+					console.log(formatter.getStyledDiff(res.result.header, res.fields.parsed));
 					console.log('---');
 				}
 				if (res.result.error) {
 					console.log(res.result.error);
 					console.log('---');
 				}
+				console.log('');
 			});
 		}
 	});
