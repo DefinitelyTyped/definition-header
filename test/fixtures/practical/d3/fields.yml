@@ -4,7 +4,7 @@
       name: "d3JS"
       version: null
     project:
-      url:  "http://d3js.org"
+      url:  "http://d3js.org/"
     authors: 
       - 
         name: "Boris Yankov"
