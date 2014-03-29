@@ -30,6 +30,6 @@ See the `Gruntfile.js` for additional commands.
 
 ## License
 
-Copyright (c) 2014 [DefinitelyTyped](https://github.com/DefinitelyTyped)
+Copyright (c) 2014 Bart van der Schoor @ [DefinitelyTyped](https://github.com/DefinitelyTyped)
 
 Licensed under the MIT license.
