@@ -12,7 +12,9 @@ Work with the headers in the definition files in the [DefinitelyTyped](https://g
 
 This module is also test to figure out how to export type-info in a npm module (like via package.json etc).
 
-## Classic header (from the [wiki](https://github.com/borisyankov/DefinitelyTyped/wiki/How-to-contribute))
+## Format
+
+Classic header (from the [wiki](https://github.com/borisyankov/DefinitelyTyped/wiki/How-to-contribute))
 
 ````
 // Type definitions for [LIBRARY NAME]
