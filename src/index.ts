@@ -1,10 +1,10 @@
 /// <reference path="./../typings/tsd.d.ts" />
 
-import P = require('parsimmon');
-import XRegExpMod = require('xregexp');
-import XRegExp = XRegExpMod.XRegExp;
-
 'use strict';
+
+import P = require('parsimmon');
+import X = require('xregexp');
+import XRegExp = X.XRegExp;
 
 export interface Header {
 	label: Label;

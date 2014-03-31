@@ -1,9 +1,8 @@
 /// <reference path="./../typings/tsd.d.ts" />
-var P = require('parsimmon');
-var XRegExpMod = require('xregexp');
-var XRegExp = XRegExpMod.XRegExp;
-
 'use strict';
+var P = require('parsimmon');
+var X = require('xregexp');
+var XRegExp = X.XRegExp;
 
 var parsers;
 (function (parsers) {

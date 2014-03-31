@@ -3,7 +3,7 @@
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-declare module XRegExpModule {
+declare module 'xregexp' {
 	// scopes: 'default', 'class', or 'all'
 	/*
 	 Native flags:
@@ -22,46 +22,41 @@ declare module XRegExpModule {
 		customFlags?: string;
 	}
 
-	interface XRegExp {
-		(pattern: string, flags?: string): RegExp;
-		(pattern: RegExp): RegExp;
+	export function XRegExp(pattern: string, flags?: string): RegExp;
+	export function XRegExp(pattern: RegExp): RegExp;
 
-		addToken(regex: RegExp, handler: (matchArr: RegExpExecArray, scope: string) => string, options?: TokenOpts): void;
+	export module XRegExp {
+		function addToken(regex: RegExp, handler: (matchArr: RegExpExecArray, scope: string) => string, options?: TokenOpts): void;
 
-		build(pattern: string, subs: string[], flags?: string): RegExp;
-		cache(pattern: string, flags?: string): RegExp;
-		escape(str: string): string;
-		exec(str: string, regex: RegExp, pos?: number, sticky?: boolean): RegExpExecArray;
-		forEach(str: string, regex: RegExp, callback: (matchArr: RegExpExecArray, index: number, input: string, regexp: RegExp) => void, context?: Object): any;
-		globalize(regex: RegExp): RegExp;
+		function build(pattern: string, subs: string[], flags?: string): RegExp;
+		function cache(pattern: string, flags?: string): RegExp;
+		function escape(str: string): string;
+		function exec(str: string, regex: RegExp, pos?: number, sticky?: boolean): RegExpExecArray;
+		function forEach(str: string, regex: RegExp, callback: (matchArr: RegExpExecArray, index: number, input: string, regexp: RegExp) => void, context?: Object): any;
+		function globalize(regex: RegExp): RegExp;
 
-		install(options: string): void;
-		install(options: Object): void;
+		function install(options: string): void;
+		function install(options: Object): void;
 
-		isInstalled(feature: string): boolean;
-		isRegExp(value: any): boolean;
-		matchChain(str: string, chain: RegExp[]): string[];
-		matchRecursive(str: string, left: string, right: string, flags: string, options?: Object): string[];
+		function isInstalled(feature: string): boolean;
+		function isRegExp(value: any): boolean;
+		function matchChain(str: string, chain: RegExp[]): string[];
+		function matchRecursive(str: string, left: string, right: string, flags?: string, options?: Object): string[];
 
-		replace(str: string, search: string, replacement: string, scope?: string): string;
-		replace(str: string, search: string, replacement: Function, scope?: string): string;
-		replace(str: string, search: RegExp, replacement: string, scope?: string): string;
-		replace(str: string, search: RegExp, replacement: Function, scope?: string): string;
+		function replace(str: string, search: string, replacement: string, scope?: string): string;
+		function replace(str: string, search: string, replacement: Function, scope?: string): string;
+		function replace(str: string, search: RegExp, replacement: string, scope?: string): string;
+		function replace(str: string, search: RegExp, replacement: Function, scope?: string): string;
 
-		split(str: string, separator: string, limit?: number): string[];
-		split(str: string, separator: RegExp, limit?: number): string[];
+		function split(str: string, separator: string, limit?: number): string[];
+		function split(str: string, separator: RegExp, limit?: number): string[];
 
-		test(str: string, regex: RegExp, pos?: number, sticky?: boolean): boolean;
-		test(str: string, regex: RegExp, pos?: number, sticky?: string): boolean;
+		function test(str: string, regex: RegExp, pos?: number, sticky?: boolean): boolean;
 
-		uninstall(options: Object): void;
-		uninstall(options: string): void;
+		function uninstall(options: Object): void;
+		function uninstall(options: string): void;
 
-		union(patterns: string[], flags?: string): RegExp;
-		version: string;
+		function union(patterns: string[], flags?: string): RegExp;
+		var version: string;
 	}
-}
-
-declare module 'xregexp' {
-	export var XRegExp: XRegExpModule.XRegExp;
 }

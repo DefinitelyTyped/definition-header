@@ -7,9 +7,11 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-tslint');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-wrap');
+	grunt.loadNpmTasks('grunt-typescript-export');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 
 	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
 		tslint: {
 			options: {
 				configuration: grunt.file.readJSON('tslint.json'),
@@ -28,7 +30,7 @@ module.exports = function (grunt) {
 		},
 		ts: {
 			options: {
-				fast: true,
+				fast: 'never',
 				target: 'es5',
 				module: 'commonjs',
 				sourcemap: true,
@@ -42,6 +44,14 @@ module.exports = function (grunt) {
 				},
 				src: ['src/index.ts'],
 				outDir: 'dist/'
+			},
+			typings: {
+				options: {
+					fast: 'never',
+					noImplicitAny: true
+				},
+				src: ['typings/**/*.ts'],
+				outDir: 'tmp/'
 			},
 			tester: {
 				src: ['test/src/tester.ts'],
@@ -62,6 +72,12 @@ module.exports = function (grunt) {
 					failOnError: true,
 					stdout: true
 				}
+			}
+		},
+		typescript_export: {
+			module: {
+				src: ['dist/*.d.ts'],
+				dest: 'dist/index.d.ts'
 			}
 		},
 		wrap: {
@@ -113,8 +129,8 @@ module.exports = function (grunt) {
 	grunt.registerTask('build', [
 		'prep',
 		'ts:index',
-		'wrap_module',
-		'tslint:src'
+		'tslint:src',
+		'typescript_export:module'
 	]);
 	grunt.registerTask('test', [
 		'build',
@@ -123,6 +139,7 @@ module.exports = function (grunt) {
 		'shell:index',
 		'shell:tester'
 	]);
+	grunt.registerTask('dev', ['ts:typings']);
 
 	grunt.registerTask('default', ['build']);
 };

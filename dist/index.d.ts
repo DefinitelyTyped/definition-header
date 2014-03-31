@@ -1,11 +1,8 @@
-// Type definitions for definition-header 0.0.1
-// Project: https://github.com/DefinitelyTyped/definition-header
-// Definitions by: Bart van der Schoor <https://github.com/Bartvds>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
-
-declare module 'definition-header' {
-
 /// <reference path="../typings/tsd.d.ts" />
+
+declare module "definition-header" {
+
+// dist/index.d.ts
 export interface Header {
     label: Label;
     project: Project;
