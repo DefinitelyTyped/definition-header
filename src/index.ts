@@ -6,6 +6,8 @@ import P = require('parsimmon');
 import X = require('xregexp');
 import XRegExp = X.XRegExp;
 
+export var REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
+
 export interface Header {
 	label: Label;
 	project: Project;
@@ -30,11 +32,30 @@ export interface Author {
 export interface Repository {
 	url: string;
 }
+module assertions {
+	export function ok(truth: any, message?: string) {
+		if (!truth) {
+			throw new Error(message || '<no message>');
+		}
+	}
+	export function number(truth: any, message?: string): void {
+		ok(typeof truth === 'string' && !isNaN(truth), 'expected number' + (message ? ': ' + message : ''));
+	}
+	export function string(truth: any, message?: string): void {
+		ok(typeof truth === 'string', 'expected string' + (message ? ': ' + message : ''));
+	}
+	export function object(truth: any, message?: string): void {
+		ok(typeof truth === 'object' && truth, 'expected object' + (message ? ': ' + message : ''));
+	}
+	export function array(truth: any, message?: string): void {
+		ok(Array.isArray(truth), 'expected array' + (message ? ': ' + message : ''));
+	}
+}
 
 module parsers {
 	/* tslint:disable:max-line-length:*/
 	var id = P.regex(/[a-z]\w*/i);
-	var semver = P.regex(/\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/);
+	var semver = P.regex(/v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/, 1);
 	var anyChar = P.regex(/[\S]+/);
 	var anyStr = P.regex(/[\S\s]+/);
 	var chars = P.regex(/\S+/);
@@ -57,7 +78,7 @@ module parsers {
 	// global unity by unicode
 	var nameUTF = P.regex(XRegExp('\\p{L}+(?:[ -]\\p{L}+)*'));
 
-	var authorElem = nameUTF.skip(space).then((n) => {
+	export var author = nameUTF.skip(space).then((n) => {
 		return uriBracket.or(P.succeed(null)).map((u) => {
 			var ret: Author = {
 				name: n,
@@ -67,7 +88,7 @@ module parsers {
 		});
 	});
 
-	var authorSeperator = P.string(', ');
+	var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/\r?\n\/\/[ \t]*/, 0)));
 
 	/* tslint:enable:max-line-length:*/
 
@@ -98,8 +119,8 @@ module parsers {
 	export var authors = comment
 		.then(space)
 		.then(P.string('Definitions by')).then(colon).then(space)
-		.then(authorElem).then((a) => {
-			return authorSeperator.then(authorElem).many().or(P.succeed([])).map((arr) => {
+		.then(author).then((a) => {
+			return authorSeparator.then(author).many().or(P.succeed([])).map((arr) => {
 				arr.unshift(a);
 				return arr;
 			});
@@ -135,10 +156,14 @@ module parsers {
 }
 
 export function parse(source: string): Header {
-	return parsers.header.parse(source);
+	var header = parsers.header.parse(source);
+	assert(header);
+	return header;
 }
 
 export function serialise(header: Header): string[] {
+	assert(header);
+
 	var ret: string[] = [];
 	ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
 	ret.push('// Project: ' + header.project.url);
@@ -147,4 +172,66 @@ export function serialise(header: Header): string[] {
 	}).join(', '));
 	ret.push('// Definitions: ' + header.repository.url);
 	return ret;
+}
+
+// should be a json-schema?
+export function assert(header: Header): any {
+	assertions.object(header, 'header');
+
+	assertions.object(header.label, 'header.label');
+	assertions.string(header.label.name, 'header.label.name');
+	if (header.label.version) {
+		assertions.string(header.label.version, 'header.label.url');
+	}
+	assertions.object(header.project, 'header.project');
+	assertions.string(header.project.url, 'header.project.url');
+
+	assertions.object(header.repository, 'header.repository');
+	assertions.string(header.repository.url, 'header.repository.url');
+
+	assertions.array(header.authors, 'header.authors');
+	assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
+
+	header.authors.forEach((author, i) => {
+		assertions.string(author.name, 'author[' + i + '].name');
+		assertions.string(author.url, 'author[' + i + '].url');
+	});
+
+	return null;
+}
+
+// need json-schema (try using typson on interfaces)
+export function analise(header: Header): any {
+	return null;
+}
+
+export function fromPackage(pkg: any): Header {
+	assertions.object(pkg, 'pkg');
+	assertions.string(pkg.name, 'pkg.version');
+	assertions.string(pkg.version, 'pkg.version');
+	assertions.string(pkg.homepage, 'pkg.homepage');
+
+	var header: Header = {
+		label: {
+			name: pkg.name,
+			version: pkg.version
+		},
+		project: {
+			url: pkg.homepage
+		},
+		repository: {
+			url: REPOSITORY
+		},
+		authors: (pkg.autors || pkg.author ? [pkg.author] : []).map(function(auth) {
+			if (typeof auth === 'string') {
+				auth = parsers.author.parse(auth);
+			}
+			assertions.object(auth, auth);
+			assertions.string(auth.name, 'auth.name');
+			assertions.string(auth.url, 'auth.url');
+			return auth;
+		})
+	};
+	assert(header);
+	return header;
 }

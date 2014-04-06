@@ -1,19 +1,19 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../../dist/index.d.ts" />
 
+'use strict';
+
 import assert = require('assert');
 import path = require('path');
 import util = require('util');
 import fsori = require('fs');
 import Promise = require('bluebird');
+import yaml = require('js-yaml');
+import sms = require('source-map-support');
 import DH = require('definition-header');
-
-'use strict';
+import exit = require('exit');
 
 var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
-var yaml = require('js-yaml');
-var exit = require('exit');
-var sms = require('source-map-support');
 sms.install();
 
 var definitionHeader: typeof DH = require('../../dist/index');
@@ -140,6 +140,17 @@ getTests(baseDir).then((groups) => {
 		console.log(report.group.name);
 		console.log('   passed %d of %d', report.results.length - report.failed, report.results.length);
 		console.log('');
+		report.results.filter(res => !!res.result.pass).forEach((res) => {
+			if (res.result.header) {
+				var serialised = definitionHeader.serialise(res.result.header).join('\n') + '\n';
+				// TODO write to disk and compare with a fixture
+				console.log(serialised);
+			}
+			if (res.result.error) {
+				console.log(res.result.error);
+			}
+		});
+
 		if (report.failed > 0) {
 			report.results.filter(res => !res.result.pass).forEach((res) => {
 				console.log(res.test.group + '/' + res.test.name);

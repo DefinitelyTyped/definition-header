@@ -110,18 +110,11 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('wrap_module', function() {
+		var head = require('./dist/index.js');
 		var pkg = require('./package.json');
 		var code = grunt.file.read('./dist/index.d.ts');
-		var head = [
-			'// Type definitions for ' + pkg.name + ' ' + pkg.version,
-			'// Project: ' + pkg.homepage,
-			'// Definitions by: ' + (pkg.autors || pkg.author ? [pkg.author] : []).map(function(auth) {
-				return auth.name + ' <' + auth.url + '>';
-			}).join(', '),
-			'// Definitions: https://github.com/borisyankov/DefinitelyTyped'
-		];
-		code = code.replace(/^export declare /gm, 'export ');
-		code = head.join('\n') + '\n\n' + 'declare module \'' +pkg.name + '\' {\n\n' + code + '\n}\n';
+
+		code = head.serialise(head.fromPackage(pkg)).join('\n') + '\n\n' + code;
 		grunt.file.write('./dist/index.d.ts', code);
 	});
 
@@ -134,7 +127,8 @@ module.exports = function (grunt) {
 		'prep',
 		'ts:index',
 		'tslint:src',
-		'typescript_export:module'
+		'typescript_export:module',
+		'wrap_module'
 	]);
 	grunt.registerTask('test', [
 		'build',

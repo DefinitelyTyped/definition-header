@@ -4,11 +4,39 @@ var P = require('parsimmon');
 var X = require('xregexp');
 var XRegExp = X.XRegExp;
 
+exports.REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
+
+var assertions;
+(function (assertions) {
+    function ok(truth, message) {
+        if (!truth) {
+            throw new Error(message || '<no message>');
+        }
+    }
+    assertions.ok = ok;
+    function number(truth, message) {
+        ok(typeof truth === 'string' && !isNaN(truth), 'expected number' + (message ? ': ' + message : ''));
+    }
+    assertions.number = number;
+    function string(truth, message) {
+        ok(typeof truth === 'string', 'expected string' + (message ? ': ' + message : ''));
+    }
+    assertions.string = string;
+    function object(truth, message) {
+        ok(typeof truth === 'object' && truth, 'expected object' + (message ? ': ' + message : ''));
+    }
+    assertions.object = object;
+    function array(truth, message) {
+        ok(Array.isArray(truth), 'expected array' + (message ? ': ' + message : ''));
+    }
+    assertions.array = array;
+})(assertions || (assertions = {}));
+
 var parsers;
 (function (parsers) {
     /* tslint:disable:max-line-length:*/
     var id = P.regex(/[a-z]\w*/i);
-    var semver = P.regex(/\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/);
+    var semver = P.regex(/v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/, 1);
     var anyChar = P.regex(/[\S]+/);
     var anyStr = P.regex(/[\S\s]+/);
     var chars = P.regex(/\S+/);
@@ -31,7 +59,7 @@ var parsers;
     // global unity by unicode
     var nameUTF = P.regex(XRegExp('\\p{L}+(?:[ -]\\p{L}+)*'));
 
-    var authorElem = nameUTF.skip(space).then(function (n) {
+    parsers.author = nameUTF.skip(space).then(function (n) {
         return uriBracket.or(P.succeed(null)).map(function (u) {
             var ret = {
                 name: n,
@@ -41,7 +69,7 @@ var parsers;
         });
     });
 
-    var authorSeperator = P.string(', ');
+    var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/\r?\n\/\/[ \t]*/, 0)));
 
     /* tslint:enable:max-line-length:*/
     parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).then(function (n) {
@@ -61,8 +89,8 @@ var parsers;
         return ret;
     });
 
-    parsers.authors = comment.then(space).then(P.string('Definitions by')).then(colon).then(space).then(authorElem).then(function (a) {
-        return authorSeperator.then(authorElem).many().or(P.succeed([])).map(function (arr) {
+    parsers.authors = comment.then(space).then(P.string('Definitions by')).then(colon).then(space).then(parsers.author).then(function (a) {
+        return authorSeparator.then(parsers.author).many().or(P.succeed([])).map(function (arr) {
             arr.unshift(a);
             return arr;
         });
@@ -87,11 +115,80 @@ var parsers;
 })(parsers || (parsers = {}));
 
 function parse(source) {
-    return parsers.header.parse(source);
+    var header = parsers.header.parse(source);
+    exports.assert(header);
+    return header;
 }
 exports.parse = parse;
 
+// should be a json-schema?
+function assert(header) {
+    assertions.object(header, 'header');
+
+    assertions.object(header.label, 'header.label');
+    assertions.string(header.label.name, 'header.label.name');
+    if (header.label.version) {
+        assertions.string(header.label.version, 'header.label.url');
+    }
+    assertions.object(header.project, 'header.project');
+    assertions.string(header.project.url, 'header.project.url');
+
+    assertions.object(header.repository, 'header.repository');
+    assertions.string(header.repository.url, 'header.repository.url');
+
+    assertions.array(header.authors, 'header.authors');
+    assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
+
+    header.authors.forEach(function (author, i) {
+        assertions.string(author.name, 'author[' + i + '].name');
+        assertions.string(author.url, 'author[' + i + '].url');
+    });
+
+    return null;
+}
+exports.assert = assert;
+
+// need json-schema (try using typson on interfaces)
+function analise(header) {
+    return null;
+}
+exports.analise = analise;
+
+function fromPackage(pkg) {
+    assertions.object(pkg, 'pkg');
+    assertions.string(pkg.name, 'pkg.version');
+    assertions.string(pkg.version, 'pkg.version');
+    assertions.string(pkg.homepage, 'pkg.homepage');
+
+    var header = {
+        label: {
+            name: pkg.name,
+            version: pkg.version
+        },
+        project: {
+            url: pkg.homepage
+        },
+        repository: {
+            url: exports.REPOSITORY
+        },
+        authors: (pkg.autors || pkg.author ? [pkg.author] : []).map(function (auth) {
+            if (typeof auth === 'string') {
+                auth = parsers.author.parse(auth);
+            }
+            assertions.object(auth, auth);
+            assertions.string(auth.name, 'auth.name');
+            assertions.string(auth.url, 'auth.url');
+            return auth;
+        })
+    };
+    exports.assert(header);
+    return header;
+}
+exports.fromPackage = fromPackage;
+
 function serialise(header) {
+    exports.assert(header);
+
     var ret = [];
     ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
     ret.push('// Project: ' + header.project.url);
