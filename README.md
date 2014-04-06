@@ -4,7 +4,9 @@
 
 > DefinitelyTyped definition header utils
 
-Work with the headers in the definition files in the [DefinitelyTyped](https://github.com/borisyankov/DefinitelyTyped) repository. Has a parser, serialiser, interfaces etc. 
+Work with the headers in the definition files in the [DefinitelyTyped](https://github.com/borisyankov/DefinitelyTyped) repository. 
+
+Has a parser, serialiser, interfaces etc. 
 
 :warning: Under construction, in-consistent, tests incomplete... :sunglasses:
 

@@ -24,6 +24,9 @@ module.exports = function (grunt) {
 			dist: [
 				'dist/**/*'
 			],
+			tmp: [
+				'tmp/**/*'
+			],
 			test: [
 				'test/tmp/**/*'
 			]
@@ -123,6 +126,7 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('prep', [
+		'clean:tmp',
 		'clean:dist',
 		'clean:test'
 	]);

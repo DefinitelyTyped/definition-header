@@ -15,6 +15,7 @@ ignoreBaseDirFile.*
 /*.tgz
 tmp/
 dump/
+.baseDir.ts
 
 _tmp.*
 
