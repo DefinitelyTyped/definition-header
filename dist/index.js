@@ -1,4 +1,5 @@
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../typings/parsimmon/parsimmon.d.ts" />
+/// <reference path="./../typings/xregexp/xregexp.d.ts" />
 'use strict';
 var P = require('parsimmon');
 var X = require('xregexp');
@@ -8,6 +9,8 @@ exports.REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
 
 var assertions;
 (function (assertions) {
+    'use strict';
+
     function ok(truth, message) {
         if (!truth) {
             throw new Error(message || '<no message>');
@@ -32,34 +35,30 @@ var assertions;
     assertions.array = array;
 })(assertions || (assertions = {}));
 
-var parsers;
-(function (parsers) {
+var Parsers;
+(function (Parsers) {
+    'use strict';
+
     /* tslint:disable:max-line-length:*/
     var id = P.regex(/[a-z]\w*/i);
     var semver = P.regex(/v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/, 1);
-    var anyChar = P.regex(/[\S]+/);
-    var anyStr = P.regex(/[\S\s]+/);
-    var chars = P.regex(/\S+/);
     var space = P.string(' ');
     var colon = P.string(':');
     var optColon = P.regex(/:?/);
     var line = P.regex(/\r?\n/);
-    var lineT = P.regex(/ *\r?\n/);
 
     // https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
     var uriLib = P.regex(/((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i);
     var uriBracket = P.string('<').then(uriLib).skip(P.string('>'));
 
-    var bom = P.regex(/\uFEFF/);
     var bomOpt = P.regex(/\uFEFF?/);
 
     var comment = P.string('//');
-    var comment3 = P.string('///');
 
     // global unity by unicode
     var nameUTF = P.regex(XRegExp('\\p{L}+(?:[ -]\\p{L}+)*'));
 
-    parsers.author = nameUTF.skip(space).then(function (n) {
+    Parsers.author = nameUTF.skip(space).then(function (n) {
         return uriBracket.or(P.succeed(null)).map(function (u) {
             var ret = {
                 name: n,
@@ -72,7 +71,7 @@ var parsers;
     var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/\r?\n\/\/[ \t]*/, 0)));
 
     /* tslint:enable:max-line-length:*/
-    parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).then(function (n) {
+    Parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).then(function (n) {
         return space.then(semver).or(P.succeed(null)).map(function (v) {
             var ret = {
                 name: n,
@@ -82,28 +81,28 @@ var parsers;
         });
     });
 
-    parsers.project = comment.then(space).then(P.string('Project')).then(colon).then(space).then(uriLib).map(function (u) {
+    Parsers.project = comment.then(space).then(P.string('Project')).then(colon).then(space).then(uriLib).map(function (u) {
         var ret = {
             url: u
         };
         return ret;
     });
 
-    parsers.authors = comment.then(space).then(P.string('Definitions by')).then(colon).then(space).then(parsers.author).then(function (a) {
-        return authorSeparator.then(parsers.author).many().or(P.succeed([])).map(function (arr) {
+    Parsers.authors = comment.then(space).then(P.string('Definitions by')).then(colon).then(space).then(Parsers.author).then(function (a) {
+        return authorSeparator.then(Parsers.author).many().or(P.succeed([])).map(function (arr) {
             arr.unshift(a);
             return arr;
         });
     });
 
-    parsers.repo = comment.then(space).then(P.string('Definitions')).then(colon).then(space).then(uriLib).map(function (u) {
+    Parsers.repo = comment.then(space).then(P.string('Definitions')).then(colon).then(space).then(uriLib).map(function (u) {
         var ret = {
             url: u
         };
         return ret;
     });
 
-    parsers.header = bomOpt.then(P.seq(parsers.label.skip(line), parsers.project.skip(line), parsers.authors.skip(line), parsers.repo.skip(line))).map(function (arr) {
+    Parsers.header = bomOpt.then(P.seq(Parsers.label.skip(line), Parsers.project.skip(line), Parsers.authors.skip(line), Parsers.repo.skip(line))).map(function (arr) {
         var ret = {
             label: arr[0],
             project: arr[1],
@@ -112,17 +111,37 @@ var parsers;
         };
         return ret;
     }).skip(P.all);
-})(parsers || (parsers = {}));
+})(Parsers || (Parsers = {}));
 
 function parse(source) {
-    var header = parsers.header.parse(source);
+    'use strict';
+
+    var header = Parsers.header.parse(source);
     exports.assert(header);
     return header;
 }
 exports.parse = parse;
 
+function serialise(header) {
+    'use strict';
+
+    exports.assert(header);
+
+    var ret = [];
+    ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
+    ret.push('// Project: ' + header.project.url);
+    ret.push('// Definitions by: ' + header.authors.map(function (author) {
+        return author.name + (author.url ? ' <' + author.url + '>' : '');
+    }).join(', '));
+    ret.push('// Definitions: ' + header.repository.url);
+    return ret;
+}
+exports.serialise = serialise;
+
 // should be a json-schema?
 function assert(header) {
+    'use strict';
+
     assertions.object(header, 'header');
 
     assertions.object(header.label, 'header.label');
@@ -150,11 +169,15 @@ exports.assert = assert;
 
 // need json-schema (try using typson on interfaces)
 function analise(header) {
+    'use strict';
+
     return null;
 }
 exports.analise = analise;
 
 function fromPackage(pkg) {
+    'use strict';
+
     assertions.object(pkg, 'pkg');
     assertions.string(pkg.name, 'pkg.version');
     assertions.string(pkg.version, 'pkg.version');
@@ -173,7 +196,7 @@ function fromPackage(pkg) {
         },
         authors: (pkg.autors || pkg.author ? [pkg.author] : []).map(function (auth) {
             if (typeof auth === 'string') {
-                auth = parsers.author.parse(auth);
+                auth = Parsers.author.parse(auth);
             }
             assertions.object(auth, auth);
             assertions.string(auth.name, 'auth.name');
@@ -185,18 +208,4 @@ function fromPackage(pkg) {
     return header;
 }
 exports.fromPackage = fromPackage;
-
-function serialise(header) {
-    exports.assert(header);
-
-    var ret = [];
-    ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
-    ret.push('// Project: ' + header.project.url);
-    ret.push('// Definitions by: ' + header.authors.map(function (author) {
-        return author.name + (author.url ? ' <' + author.url + '>' : '');
-    }).join(', '));
-    ret.push('// Definitions: ' + header.repository.url);
-    return ret;
-}
-exports.serialise = serialise;
 //# sourceMappingURL=index.js.map

@@ -11,6 +11,10 @@
 /tscommand*
 ignoreBaseDirFile.*
 .tscache
+.baseDir.ts
+.baseDir.d.ts
+.baseDir.js
+.baseDir.js.map
 
 /*.tgz
 tmp/

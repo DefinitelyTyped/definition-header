@@ -1,11 +1,11 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/node/node.d.ts" />
+/// <reference path="../../typings/bluebird/bluebird.d.ts" />
 /// <reference path="../../dist/index.d.ts" />
 
 'use strict';
 
 import assert = require('assert');
 import path = require('path');
-import util = require('util');
 import fsori = require('fs');
 import Promise = require('bluebird');
 import yaml = require('js-yaml');
@@ -38,13 +38,11 @@ var fs = {
 	stat: Promise.promisify(fsori.stat)
 };
 
-function getDiff() {
-
-}
-
 var baseDir = './test/fixtures';
 
 function getDirs(base: string): Promise<string[]> {
+	'use strict';
+
 	return fs.readdir(base).then((files: string[]) => {
 		return Promise.filter(files, (file) => {
 			return fs.stat(path.join(base, file)).then((stat) => {
@@ -54,7 +52,10 @@ function getDirs(base: string): Promise<string[]> {
 	});
 }
 
+/* tslint:disable:no-unused-variable:*/
 function getFiles(base: string): Promise<string[]> {
+	'use strict';
+
 	return fs.readdir(base).then((files: string[]) => {
 		return Promise.filter(files, (file) => {
 			return fs.stat(path.join(base, file)).then((stat) => {
@@ -63,8 +64,11 @@ function getFiles(base: string): Promise<string[]> {
 		});
 	});
 }
+/* tslint:enable:no-unused-variable:*/
 
 function getTests(base): Promise<any[]> {
+	'use strict';
+
 	return fs.readYaml(path.join(base, 'conf.yml')).catch((e) => {
 		return {};
 	}).then((conf) => {
@@ -87,6 +91,8 @@ function getTests(base): Promise<any[]> {
 }
 
 function runTests(tests): Promise<any[]> {
+	'use strict';
+
 	return Promise.map(tests, (test: any) => {
 		return Promise.all([
 			fs.readUTF8(path.join(test.full, 'header.txt')),

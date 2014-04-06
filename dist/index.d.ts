@@ -3,36 +3,37 @@
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/parsimmon/parsimmon.d.ts" />
+/// <reference path="../typings/xregexp/xregexp.d.ts" />
 
 declare module "definition-header" {
 
     // dist/index.d.ts
     export var REPOSITORY: string;
-    export interface Header {
-        label: Label;
-        project: Project;
-        authors: Author[];
-        repository: Repository;
+    export interface IHeader {
+        label: ILabel;
+        project: IProject;
+        authors: IAuthor[];
+        repository: IRepository;
     }
-    export interface Label {
+    export interface ILabel {
         name: string;
         version: string;
     }
-    export interface Project {
+    export interface IProject {
         url: string;
     }
-    export interface Author {
+    export interface IAuthor {
         name: string;
         url: string;
     }
-    export interface Repository {
+    export interface IRepository {
         url: string;
     }
-    export function parse(source: string): Header;
-    export function assert(header: Header): any;
-    export function analise(header: Header): any;
-    export function fromPackage(pkg: any): Header;
-    export function serialise(header: Header): string[];
+    export function parse(source: string): IHeader;
+    export function serialise(header: IHeader): string[];
+    export function assert(header: IHeader): any;
+    export function analise(header: IHeader): any;
+    export function fromPackage(pkg: any): IHeader;
 
 }
