@@ -23,7 +23,7 @@ declare module 'parsimmon' {
 			 returns a new parser which tries parser, and if it fails uses otherParser.
 			 */
 			or(otherParser: Parser<T>): Parser<T>;
-			// or<U>(otherParser: Parser<U>): Parser<any>;
+			or<U>(otherParser: Parser<U>): Parser<any>;
 			/*
 			 returns a new parser which tries parser, and on success calls the given function with the result of the parse, which is expected to return another parser.
 			 */
@@ -77,8 +77,7 @@ declare module 'parsimmon' {
 		/*
 		 is a parser that expects the stream to match the given regex.
 		 */
-		export function regex(myregex: RegExp, group?: number): Parser<string>;
-		export function regex(myregex: RegExp, group?: string): Parser<string>;
+		export function regex(myregex: RegExp): Parser<string>;
 
 		/*
 		 is a parser that doesn't consume any of the string, and yields result.
