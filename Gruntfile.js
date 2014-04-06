@@ -3,12 +3,7 @@ module.exports = function (grunt) {
 
 	var path = require('path');
 
-	grunt.loadNpmTasks('grunt-ts');
-	grunt.loadNpmTasks('grunt-tslint');
-	grunt.loadNpmTasks('grunt-shell');
-	grunt.loadNpmTasks('grunt-wrap');
-	grunt.loadNpmTasks('grunt-typescript-export');
-	grunt.loadNpmTasks('grunt-contrib-clean');
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
