@@ -3,7 +3,7 @@
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../typings/parsimmon/parsimmon.d.ts" />
+/// <reference path="../ownTypings/parsimmon.d.ts" />
 /// <reference path="../typings/xregexp/xregexp.d.ts" />
 
 declare module "definition-header" {

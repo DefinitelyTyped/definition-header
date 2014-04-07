@@ -1,10 +1,13 @@
 /// <reference path="../../typings/node/node.d.ts" />
 /// <reference path="../../typings/bluebird/bluebird.d.ts" />
+/// <reference path="../../typings/js-yaml/js-yaml.d.ts" />
+/// <reference path="../../typings/source-map-support/source-map-support.d.ts" />
+/// <reference path="../../typings/exit/exit.d.ts" />
 /// <reference path="../../dist/index.d.ts" />
 
 'use strict';
 
-import assert = require('assert');
+// import assert = require('assert');
 import path = require('path');
 import fsori = require('fs');
 import Promise = require('bluebird');

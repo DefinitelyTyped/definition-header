@@ -1,4 +1,4 @@
-/// <reference path="./../typings/parsimmon/parsimmon.d.ts" />
+/// <reference path="./../ownTypings/parsimmon.d.ts" />
 /// <reference path="./../typings/xregexp/xregexp.d.ts" />
 
 'use strict';
@@ -33,7 +33,8 @@ export interface IAuthor {
 export interface IRepository {
 	url: string;
 }
-module assertions {
+
+module Assertions {
 	'use strict';
 
 	export function ok(truth: any, message?: string) {
@@ -179,25 +180,25 @@ export function serialise(header: IHeader): string[] {
 export function assert(header: IHeader): any {
 	'use strict';
 
-	assertions.object(header, 'header');
+	Assertions.object(header, 'header');
 
-	assertions.object(header.label, 'header.label');
-	assertions.string(header.label.name, 'header.label.name');
+	Assertions.object(header.label, 'header.label');
+	Assertions.string(header.label.name, 'header.label.name');
 	if (header.label.version) {
-		assertions.string(header.label.version, 'header.label.url');
+		Assertions.string(header.label.version, 'header.label.url');
 	}
-	assertions.object(header.project, 'header.project');
-	assertions.string(header.project.url, 'header.project.url');
+	Assertions.object(header.project, 'header.project');
+	Assertions.string(header.project.url, 'header.project.url');
 
-	assertions.object(header.repository, 'header.repository');
-	assertions.string(header.repository.url, 'header.repository.url');
+	Assertions.object(header.repository, 'header.repository');
+	Assertions.string(header.repository.url, 'header.repository.url');
 
-	assertions.array(header.authors, 'header.authors');
-	assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
+	Assertions.array(header.authors, 'header.authors');
+	Assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
 
 	header.authors.forEach((author, i) => {
-		assertions.string(author.name, 'author[' + i + '].name');
-		assertions.string(author.url, 'author[' + i + '].url');
+		Assertions.string(author.name, 'author[' + i + '].name');
+		Assertions.string(author.url, 'author[' + i + '].url');
 	});
 
 	return null;
@@ -213,10 +214,10 @@ export function analise(header: IHeader): any {
 export function fromPackage(pkg: any): IHeader {
 	'use strict';
 
-	assertions.object(pkg, 'pkg');
-	assertions.string(pkg.name, 'pkg.version');
-	assertions.string(pkg.version, 'pkg.version');
-	assertions.string(pkg.homepage, 'pkg.homepage');
+	Assertions.object(pkg, 'pkg');
+	Assertions.string(pkg.name, 'pkg.version');
+	Assertions.string(pkg.version, 'pkg.version');
+	Assertions.string(pkg.homepage, 'pkg.homepage');
 
 	var header: IHeader = {
 		label: {
@@ -233,9 +234,9 @@ export function fromPackage(pkg: any): IHeader {
 			if (typeof auth === 'string') {
 				auth = Parsers.author.parse(auth);
 			}
-			assertions.object(auth, auth);
-			assertions.string(auth.name, 'auth.name');
-			assertions.string(auth.url, 'auth.url');
+			Assertions.object(auth, auth);
+			Assertions.string(auth.name, 'auth.name');
+			Assertions.string(auth.url, 'auth.url');
 			return auth;
 		})
 	};

@@ -1,4 +1,4 @@
-/// <reference path="./../typings/parsimmon/parsimmon.d.ts" />
+/// <reference path="./../ownTypings/parsimmon.d.ts" />
 /// <reference path="./../typings/xregexp/xregexp.d.ts" />
 'use strict';
 var P = require('parsimmon');
@@ -7,8 +7,8 @@ var XRegExp = X.XRegExp;
 
 exports.REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
 
-var assertions;
-(function (assertions) {
+var Assertions;
+(function (Assertions) {
     'use strict';
 
     function ok(truth, message) {
@@ -16,24 +16,24 @@ var assertions;
             throw new Error(message || '<no message>');
         }
     }
-    assertions.ok = ok;
+    Assertions.ok = ok;
     function number(truth, message) {
         ok(typeof truth === 'string' && !isNaN(truth), 'expected number' + (message ? ': ' + message : ''));
     }
-    assertions.number = number;
+    Assertions.number = number;
     function string(truth, message) {
         ok(typeof truth === 'string', 'expected string' + (message ? ': ' + message : ''));
     }
-    assertions.string = string;
+    Assertions.string = string;
     function object(truth, message) {
         ok(typeof truth === 'object' && truth, 'expected object' + (message ? ': ' + message : ''));
     }
-    assertions.object = object;
+    Assertions.object = object;
     function array(truth, message) {
         ok(Array.isArray(truth), 'expected array' + (message ? ': ' + message : ''));
     }
-    assertions.array = array;
-})(assertions || (assertions = {}));
+    Assertions.array = array;
+})(Assertions || (Assertions = {}));
 
 var Parsers;
 (function (Parsers) {
@@ -142,25 +142,25 @@ exports.serialise = serialise;
 function assert(header) {
     'use strict';
 
-    assertions.object(header, 'header');
+    Assertions.object(header, 'header');
 
-    assertions.object(header.label, 'header.label');
-    assertions.string(header.label.name, 'header.label.name');
+    Assertions.object(header.label, 'header.label');
+    Assertions.string(header.label.name, 'header.label.name');
     if (header.label.version) {
-        assertions.string(header.label.version, 'header.label.url');
+        Assertions.string(header.label.version, 'header.label.url');
     }
-    assertions.object(header.project, 'header.project');
-    assertions.string(header.project.url, 'header.project.url');
+    Assertions.object(header.project, 'header.project');
+    Assertions.string(header.project.url, 'header.project.url');
 
-    assertions.object(header.repository, 'header.repository');
-    assertions.string(header.repository.url, 'header.repository.url');
+    Assertions.object(header.repository, 'header.repository');
+    Assertions.string(header.repository.url, 'header.repository.url');
 
-    assertions.array(header.authors, 'header.authors');
-    assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
+    Assertions.array(header.authors, 'header.authors');
+    Assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
 
     header.authors.forEach(function (author, i) {
-        assertions.string(author.name, 'author[' + i + '].name');
-        assertions.string(author.url, 'author[' + i + '].url');
+        Assertions.string(author.name, 'author[' + i + '].name');
+        Assertions.string(author.url, 'author[' + i + '].url');
     });
 
     return null;
@@ -178,10 +178,10 @@ exports.analise = analise;
 function fromPackage(pkg) {
     'use strict';
 
-    assertions.object(pkg, 'pkg');
-    assertions.string(pkg.name, 'pkg.version');
-    assertions.string(pkg.version, 'pkg.version');
-    assertions.string(pkg.homepage, 'pkg.homepage');
+    Assertions.object(pkg, 'pkg');
+    Assertions.string(pkg.name, 'pkg.version');
+    Assertions.string(pkg.version, 'pkg.version');
+    Assertions.string(pkg.homepage, 'pkg.homepage');
 
     var header = {
         label: {
@@ -198,9 +198,9 @@ function fromPackage(pkg) {
             if (typeof auth === 'string') {
                 auth = Parsers.author.parse(auth);
             }
-            assertions.object(auth, auth);
-            assertions.string(auth.name, 'auth.name');
-            assertions.string(auth.url, 'auth.url');
+            Assertions.object(auth, auth);
+            Assertions.string(auth.name, 'auth.name');
+            Assertions.string(auth.url, 'auth.url');
             return auth;
         })
     };
