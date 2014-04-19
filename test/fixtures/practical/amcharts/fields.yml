@@ -3,11 +3,10 @@
     label:
       name: "amCharts"
       version: null
-    description: ""
     project:
-      url:  "http://www.amcharts.com/"
-    authors: 
-      - 
+      url:  "http://www.amcharts.com"
+    authors:
+      -
         name: "aleksey-bykov"
         url: "https://github.com/aleksey-bykov"
     repository:

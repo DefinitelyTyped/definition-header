@@ -1,43 +1,67 @@
 ---
   parsed:
     label:
-      name: "jQuery"
-      version: "1.10"
-    description: ""
+      name: jQuery 1.10.x / 2.0.x
+      version: null
     project:
-      url:  "http://jquery.com"
-    authors: 
-      - 
-        name: "Boris Yankov"
+      url: "http://jquery.com"
+    authors:
+      -
+        name: Boris Yankov
         url: "https://github.com/borisyankov"
-      - 
-        name: "Christian Hoffmeister"
+      -
+        name: Christian Hoffmeister
         url: "https://github.com/choffmeister"
-      - 
-        name: "Diullei Gomes"
+      -
+        name: Steve Fenton
+        url: null
+      -
+        name: Diullei Gomes
         url: "https://github.com/Diullei"
-      - 
-        name: "Jason Swearingen"
-      - 
-        name: "Guus Goossens"
+      -
+        name: Tass Iliopoulos
+        url: "https://github.com/tasoili"
+      -
+        name: Jason Swearingen
+        url: null
+      -
+        name: Sean Hill
+        url: "https://github.com/seanski"
+      -
+        name: Guus Goossens
         url: "https://github.com/Guuz"
-      - 
-        name: "Basarat Ali Syed"
+      -
+        name: Kelly Summerlin
+        url: "https://github.com/ksummerlin"
+      -
+        name: Basarat Ali Syed
         url: "https://github.com/basarat"
-      - 
-        name: "Derek Cicerone"
+      -
+        name: Nicholas Wolverson
+        url: "https://github.com/nwolverson"
+      -
+        name: Derek Cicerone
         url: "https://github.com/derekcicerone"
-      - 
-        name: "rew Gaspar"
+      -
+        name: Andrew Gaspar
         url: "https://github.com/AndrewGaspar"
-      - 
-        name: "Seikichi Kondo"
+      -
+        name: James Harrison Fisher
+        url: "https://github.com/jameshfisher"
+      -
+        name: Seikichi Kondo
         url: "https://github.com/seikichi"
-      - 
-        name: "Poul Sorensen"
+      -
+        name: Benjamin Jackman
+        url: "https://github.com/benjaminjackman"
+      -
+        name: Poul Sorensen
         url: "https://github.com/s093294"
-      - 
-        name: "John Reilly"
+      -
+        name: Josh Strobl
+        url: "https://github.com/JoshStrobl"
+      -
+        name: John Reilly
         url: "https://github.com/johnnyreilly"
     repository:
-      url:  "https://github.com/borisyankov/DefinitelyTyped"
+      url: "https://github.com/borisyankov/DefinitelyTyped"

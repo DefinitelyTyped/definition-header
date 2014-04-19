@@ -5,8 +5,9 @@
       version: "2.2"
     project:
       url:  "http://linqjs.codeplex.com"
-    authors: 
-      - 
+    authors:
+      -
         name: "Marcin Najder"
+        url: null
     repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

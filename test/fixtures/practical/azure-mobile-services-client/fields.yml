@@ -1,13 +1,13 @@
 ---
-  parsed: 
+  parsed:
     label:
-      name: "Microsoft.Windows.Azure.MobileService.Web-1.0.0"
+      name: "Microsoft.Windows.Azure.MobileService.Web"
       version: "1.0.0"
     project:
-      url:  "http://www.windowsazure.com/en-us/develop/mobile/"
-    authors: 
-      - 
+      url:  "http://www.windowsazure.com/en-us/develop/mobile"
+    authors:
+      -
         name: "Morosinotto Daniele"
-        url: "https://github.com/dmorosinotto/"
+        url: "https://github.com/dmorosinotto"
     repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

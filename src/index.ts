@@ -2,9 +2,12 @@
 
 'use strict';
 
+import path = require('path');
+
 import P = require('parsimmon');
 import X = require('xregexp');
 import XRegExp = X.XRegExp;
+import Joi = require('joi');
 
 export var REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
 
@@ -32,86 +35,126 @@ export interface Author {
 export interface Repository {
 	url: string;
 }
+
+module regex {
+	/* tslint:disable:max-line-length:*/
+
+	// export var label = /[a-z](?:[ _.-]?[a-z0-9]+)*/i;
+	export var label = /[a-z](?:(?:[ _.-]| [\/@-] )?[a-z0-9]+)*/i;
+
+	export var semverC = /\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/;
+	export var semverV = /v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/;
+	export var semverExtract = /^(.*?)[ -]v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)$/;
+
+	// https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
+	export var uri = /((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+	// global unity by unicode
+	export var nameUTF = XRegExp('\\p{L}+(?:[ \\.@-]\\p{L}+)*');
+
+	/* tslint:enable:max-line-length:*/
+}
+
 module assertions {
 	export function ok(truth: any, message?: string) {
 		if (!truth) {
 			throw new Error(message || '<no message>');
 		}
 	}
+
 	export function number(truth: any, message?: string): void {
 		ok(typeof truth === 'string' && !isNaN(truth), 'expected number' + (message ? ': ' + message : ''));
 	}
+
 	export function string(truth: any, message?: string): void {
 		ok(typeof truth === 'string', 'expected string' + (message ? ': ' + message : ''));
 	}
+
 	export function object(truth: any, message?: string): void {
 		ok(typeof truth === 'object' && truth, 'expected object' + (message ? ': ' + message : ''));
 	}
+
 	export function array(truth: any, message?: string): void {
 		ok(Array.isArray(truth), 'expected array' + (message ? ': ' + message : ''));
 	}
+
+	export function uri(truth: any, message?: string): void {
+		ok(regex.uri.test(truth), 'expected uri' + (message ? ': ' + message : ''));
+	}
+
+	export function semver(truth: any, message?: string): void {
+		ok(regex.semverC.test(truth), 'expected uri' + (message ? ': ' + message : ''));
+	}
 }
 
+var headerSchema = Joi.object({
+	label: Joi.object({
+		name: Joi.string().regex(regex.nameUTF).required(),
+		version: Joi.string().regex(regex.semverC).optional()
+	}).required(),
+	project: Joi.object({
+		url: Joi.string().regex(regex.uri).required()
+	}).required(),
+	repository: Joi.object({
+		url: Joi.string().regex(regex.uri).required()
+	}).required(),
+	authors: Joi.array().min(1).includes(Joi.object({
+		name: Joi.string().regex(regex.nameUTF).required(),
+		url: Joi.string().regex(regex.uri).optional()
+	})).required()
+});
+
 module parsers {
-	/* tslint:disable:max-line-length:*/
-	var id = P.regex(/[a-z]\w*/i);
-	var semver = P.regex(/v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/, 1);
-	var anyChar = P.regex(/[\S]+/);
-	var anyStr = P.regex(/[\S\s]+/);
-	var chars = P.regex(/\S+/);
+	var id = P.regex(regex.label);
 	var space = P.string(' ');
 	var colon = P.string(':');
 	var optColon = P.regex(/:?/);
 	var line = P.regex(/\r?\n/);
-	var lineT = P.regex(/ *\r?\n/);
 
-	// https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
-	var uriLib = P.regex(/((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i);
-	var uriBracket = P.string('<').then(uriLib).skip(P.string('>'));
+	var uri = P.regex(regex.uri);
+	var uriBracket = P.string('<').then(uri).skip(P.string('>'));
 
-	var bom = P.regex(/\uFEFF/);
 	var bomOpt = P.regex(/\uFEFF?/);
 
 	var comment = P.string('//');
 	var comment3 = P.string('///');
 
-	// global unity by unicode
-	var nameUTF = P.regex(XRegExp('\\p{L}+(?:[ -]\\p{L}+)*'));
+	var nameUTF = P.regex(regex.nameUTF);
 
-	export var author = nameUTF.skip(space).then((n) => {
-		return uriBracket.or(P.succeed(null)).map((u) => {
+	export var author = nameUTF.then((n) => {
+		return space.then(uriBracket).or(P.succeed(null)).map((u) => {
 			var ret: Author = {
 				name: n,
-				url: u
+				url: untrail(u)
 			};
 			return ret;
 		});
 	});
 
-	var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/\r?\n\/\/[ \t]*/, 0)));
-
-	/* tslint:enable:max-line-length:*/
+	var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/ *\r?\n\/\/[ \t]*/, 0)));
 
 	export var label = comment
 		.then(space)
 		.then(P.string('Type definitions for')).then(optColon).then(space)
-		.then(id)
-		.then((n) => {
-			return space.then(semver).or(P.succeed(null)).map((v) => {
-				var ret: Label = {
-					name: n,
-					version: v
-				};
-				return ret;
-			});
+		.then(id).map((nn) => {
+			// TODO move semver extractor to sub-parser
+			regex.semverExtract.lastIndex = 0;
+			var extr = regex.semverExtract.exec(nn);
+			var ret: Label = extr ? {
+				name: extr[1],
+				version: extr[2] || null
+			} : {
+				name: nn,
+				version: null
+			};
+			return ret;
 		});
 
 	export var project = comment
 		.then(space)
 		.then(P.string('Project')).then(colon).then(space)
-		.then(uriLib).map((u) => {
+		.then(uri).map((u) => {
 			var ret: Project = {
-				url: u
+				url: untrail(u)
 			};
 			return ret;
 		});
@@ -129,9 +172,9 @@ module parsers {
 	export var repo = comment
 		.then(space)
 		.then(P.string('Definitions')).then(colon).then(space)
-		.then(uriLib).map((u) => {
+		.then(uri).map((u) => {
 			var ret: Repository = {
-				url: u
+				url: untrail(u)
 			};
 			return ret;
 		});
@@ -174,43 +217,74 @@ export function serialise(header: Header): string[] {
 	return ret;
 }
 
-// should be a json-schema?
-export function assert(header: Header): any {
-	assertions.object(header, 'header');
-
-	assertions.object(header.label, 'header.label');
-	assertions.string(header.label.name, 'header.label.name');
-	if (header.label.version) {
-		assertions.string(header.label.version, 'header.label.url');
-	}
-	assertions.object(header.project, 'header.project');
-	assertions.string(header.project.url, 'header.project.url');
-
-	assertions.object(header.repository, 'header.repository');
-	assertions.string(header.repository.url, 'header.repository.url');
-
-	assertions.array(header.authors, 'header.authors');
-	assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
-
-	header.authors.forEach((author, i) => {
-		assertions.string(author.name, 'author[' + i + '].name');
-		assertions.string(author.url, 'author[' + i + '].url');
+export function assert(header: Header): void {
+	headerSchema.validate(header, null, (err) => {
+		if (err) {
+			console.log('Header assert error');
+			console.log(err);
+			// TODO better report
+			throw err;
+		}
 	});
-
-	return null;
 }
 
-// need json-schema (try using typson on interfaces)
-export function analise(header: Header): any {
-	return null;
+var lineExp = /\r?\n/g;
+
+function getLines(stream: string, start: number, end: number = 0): string[] {
+	// TODO improve line grabber (remove horrible split for top-down line parser)
+	var arr = stream.split(lineExp);
+	start = Math.max(start, 0);
+	if (!end) {
+		end = arr.length - 1;
+	}
+	else {
+		end = Math.min(end, arr.length - 1);
+	}
+	end = Math.max(end, start + 1);
+	return arr.slice(start, end + 1);
+}
+
+function untrail(str: string): string {
+	if (!str) {
+		return str;
+	}
+	return str.replace(/\/$/, '');
+}
+
+function pointer(col: number): string {
+	var str = '';
+	for (var i = 0; i < col - 1; i++) {
+		str += '-';
+	}
+	return str + '^';
+}
+
+export function highlightPos(stream: string, row: number, col?: number): string {
+	var lines = getLines(stream, 0, row + 2);
+	if (typeof col === 'number') {
+		lines.splice(row + 1, 0, pointer(col));
+	}
+	return lines.join('\n');
+}
+
+export function linkPos(dest: string, row?: number, col?: number, add: boolean = false): string {
+	if (typeof col !== 'number') {
+		col = 0;
+	}
+	if (typeof row !== 'number') {
+		row = 0;
+	}
+	if (add) {
+		col += 1;
+		row += 1;
+	}
+	return path.resolve(path.normalize(dest)) + '[' + row + ',' + col + ']';
 }
 
 export function fromPackage(pkg: any): Header {
 	assertions.object(pkg, 'pkg');
-	assertions.string(pkg.name, 'pkg.version');
-	assertions.string(pkg.version, 'pkg.version');
-	assertions.string(pkg.homepage, 'pkg.homepage');
 
+	// naively set values
 	var header: Header = {
 		label: {
 			name: pkg.name,
@@ -222,16 +296,14 @@ export function fromPackage(pkg: any): Header {
 		repository: {
 			url: REPOSITORY
 		},
-		authors: (pkg.autors || pkg.author ? [pkg.author] : []).map(function(auth) {
+		authors: (pkg.autors || pkg.author ? [pkg.author] : []).map(function (auth) {
 			if (typeof auth === 'string') {
 				auth = parsers.author.parse(auth);
 			}
-			assertions.object(auth, auth);
-			assertions.string(auth.name, 'auth.name');
-			assertions.string(auth.url, 'auth.url');
 			return auth;
 		})
 	};
+	// do shared deep assertion
 	assert(header);
 	return header;
 }

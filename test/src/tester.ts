@@ -12,6 +12,7 @@ import yaml = require('js-yaml');
 import sms = require('source-map-support');
 import DH = require('definition-header');
 import exit = require('exit');
+import mkdirp = require('mkdirp');
 
 var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 sms.install();
@@ -35,7 +36,11 @@ var fs = {
 		return fs.readFile(src, {encoding: 'utf8'});
 	},
 	readdir: Promise.promisify(fsori.readdir),
-	stat: Promise.promisify(fsori.stat)
+	stat: Promise.promisify(fsori.stat),
+	writeSync: function(dest: string, content) {
+		mkdirp.sync(path.dirname(dest));
+		fsori.writeFileSync(dest, content);
+	}
 };
 
 function getDiff() {
@@ -77,7 +82,8 @@ function getTests(base): Promise<any[]> {
 						return {
 							group: group,
 							name: name,
-							full: path.resolve(base, group, name)
+							full: path.resolve(base, group, name),
+							tmp: path.resolve(base, '..', 'tmp', group, name)
 						};
 					})
 				};
@@ -140,14 +146,17 @@ getTests(baseDir).then((groups) => {
 		console.log(report.group.name);
 		console.log('   passed %d of %d', report.results.length - report.failed, report.results.length);
 		console.log('');
+		report.results.forEach((res) => {
+			if (res.result.header) {
+				var serialised = definitionHeader.serialise(res.result.header).join('\n') + '\n';
+				fs.writeSync(path.join(res.test.tmp, 'fields.yml'), yaml.dump(res.result.header, {indent: 2}));
+				fs.writeSync(path.join(res.test.tmp, 'header.txt'), serialised);
+			}
+		});
 		report.results.filter(res => !!res.result.pass).forEach((res) => {
 			if (res.result.header) {
 				var serialised = definitionHeader.serialise(res.result.header).join('\n') + '\n';
-				// TODO write to disk and compare with a fixture
 				console.log(serialised);
-			}
-			if (res.result.error) {
-				console.log(res.result.error);
 			}
 		});
 
@@ -160,7 +169,11 @@ getTests(baseDir).then((groups) => {
 					console.log('---');
 				}
 				if (res.result.error) {
-					console.log(res.result.error);
+					var e = res.result.error;
+					if (e.position) {
+						console.log(definitionHeader.linkPos(path.join(res.test.full, 'header.txt'), e.position.row, e.position.col, true));
+						console.log(definitionHeader.highlightPos(e.stream, e.position.row, e.position.col));
+					}
 					console.log('---');
 				}
 				console.log('');
