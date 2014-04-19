@@ -1,15 +1,15 @@
 ---
   parsed:
     label:
-      name: "Breeze 1.2.7"
+      name: "Breeze"
       version: "1.2.7"
     project:
       url:  "http://www.breezejs.com"
-    authors: 
-      - 
+    authors:
+      -
         name: "Boris Yankov"
         url: "https://github.com/borisyankov"
-      - 
+      -
         name: "IdeaBlade"
         url: "https://github.com/IdeaBlade/Breeze"
     repository:

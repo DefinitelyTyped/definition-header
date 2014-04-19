@@ -12,8 +12,9 @@ exports.REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
 var regex;
 (function (regex) {
     /* tslint:disable:max-line-length:*/
-    // export var label = /[a-z](?:[ _.-]?[a-z0-9]+)*/i;
-    regex.label = /[a-z](?:(?:[ _.-]| [\/@-] )?[a-z0-9]+)*/i;
+    // export var label = /[a-z](?:[ _\.-]?[a-z0-9]+)*/i;
+    // TODO kill parenthesis
+    regex.label = /[a-z](?:(?:[ _\.-]| [\/@-] )?\(?[a-z0-9]+\)?)*/i;
 
     regex.semverC = /\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/;
     regex.semverV = /v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/;
@@ -23,7 +24,8 @@ var regex;
     regex.uri = /((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
 
     // global unity by unicode
-    regex.nameUTF = XRegExp('\\p{L}+(?:[ \\.@-]\\p{L}+)*');
+    regex.name = /[a-z]+(?:(?:\. |[ _\.-]| [\/@-] )?[a-z0-9]+)*/i;
+    regex.nameUTF = XRegExp('\\p{L}+(?:(?:\\. |[ _\\.-]| [\\/@-] )?\\p{L}+)*');
 })(regex || (regex = {}));
 
 var assertions;
@@ -111,7 +113,7 @@ var parsers;
         });
     });
 
-    var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/ *\r?\n\/\/[ \t]*/, 0)));
+    var authorSeparator = P.string(',').then(P.regex(/ ?\r?\n\/\/[ \t]*/).or(P.string(' ')));
 
     parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).map(function (nn) {
         // TODO move semver extractor to sub-parser

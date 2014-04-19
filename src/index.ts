@@ -39,8 +39,9 @@ export interface Repository {
 module regex {
 	/* tslint:disable:max-line-length:*/
 
-	// export var label = /[a-z](?:[ _.-]?[a-z0-9]+)*/i;
-	export var label = /[a-z](?:(?:[ _.-]| [\/@-] )?[a-z0-9]+)*/i;
+	// export var label = /[a-z](?:[ _\.-]?[a-z0-9]+)*/i;
+	// TODO kill parenthesis
+	export var label = /[a-z](?:(?:[ _\.-]| [\/@-] )?\(?[a-z0-9]+\)?)*/i;
 
 	export var semverC = /\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/;
 	export var semverV = /v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/;
@@ -49,7 +50,9 @@ module regex {
 	// https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
 	export var uri = /((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
 	// global unity by unicode
-	export var nameUTF = XRegExp('\\p{L}+(?:[ \\.@-]\\p{L}+)*');
+	export var name = /[a-z]+(?:(?:\. |[ _\.-]| [\/@-] )?[a-z0-9]+)*/i;
+	export var nameUTF = XRegExp('\\p{L}+(?:(?:\\. |[ _\\.-]| [\\/@-] )?\\p{L}+)*');
+	// export var nameUTF = XRegExp('\\p{L}+(?:[ \\.@-]\\p{L}+)*');
 
 	/* tslint:enable:max-line-length:*/
 }
@@ -130,7 +133,7 @@ module parsers {
 		});
 	});
 
-	var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/ *\r?\n\/\/[ \t]*/, 0)));
+	var authorSeparator = P.string(',').then(P.regex(/ ?\r?\n\/\/[ \t]*/).or(P.string(' ')));
 
 	export var label = comment
 		.then(space)
