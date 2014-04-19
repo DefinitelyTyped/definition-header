@@ -5,8 +5,8 @@
       version: "0.1"
     project:
       url:  "https://github.com/caolan/async"
-    authors: 
-      - 
+    authors:
+      -
         name: "Boris Yankov"
         url: "https://github.com/borisyankov"
     repository:

@@ -1,10 +1,32 @@
 /// <reference path="./../typings/tsd.d.ts" />
 'use strict';
+var path = require('path');
+
 var P = require('parsimmon');
 var X = require('xregexp');
 var XRegExp = X.XRegExp;
+var Joi = require('joi');
 
 exports.REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
+
+var regex;
+(function (regex) {
+    /* tslint:disable:max-line-length:*/
+    // export var label = /[a-z](?:[ _\.-]?[a-z0-9]+)*/i;
+    // TODO kill parenthesis
+    regex.label = /[a-z](?:(?:[ _\.-]| [\/@-] )?\(?[a-z0-9]+\)?)*/i;
+
+    regex.semverC = /\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/;
+    regex.semverV = /v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/;
+    regex.semverExtract = /^(.*?)[ -]v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)$/;
+
+    // https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
+    regex.uri = /((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+
+    // global unity by unicode
+    regex.name = /[a-z]+(?:(?:\. |[ _\.-]| [\/@-] )?[a-z0-9]+)*/i;
+    regex.nameUTF = XRegExp('\\p{L}+(?:(?:\\. |[ _\\.-]| [\\/@-] )?\\p{L}+)*');
+})(regex || (regex = {}));
 
 var assertions;
 (function (assertions) {
@@ -14,77 +36,102 @@ var assertions;
         }
     }
     assertions.ok = ok;
+
     function number(truth, message) {
         ok(typeof truth === 'string' && !isNaN(truth), 'expected number' + (message ? ': ' + message : ''));
     }
     assertions.number = number;
+
     function string(truth, message) {
         ok(typeof truth === 'string', 'expected string' + (message ? ': ' + message : ''));
     }
     assertions.string = string;
+
     function object(truth, message) {
         ok(typeof truth === 'object' && truth, 'expected object' + (message ? ': ' + message : ''));
     }
     assertions.object = object;
+
     function array(truth, message) {
         ok(Array.isArray(truth), 'expected array' + (message ? ': ' + message : ''));
     }
     assertions.array = array;
+
+    function uri(truth, message) {
+        ok(regex.uri.test(truth), 'expected uri' + (message ? ': ' + message : ''));
+    }
+    assertions.uri = uri;
+
+    function semver(truth, message) {
+        ok(regex.semverC.test(truth), 'expected uri' + (message ? ': ' + message : ''));
+    }
+    assertions.semver = semver;
 })(assertions || (assertions = {}));
+
+var headerSchema = Joi.object({
+    label: Joi.object({
+        name: Joi.string().regex(regex.nameUTF).required(),
+        version: Joi.string().regex(regex.semverC).optional()
+    }).required(),
+    project: Joi.object({
+        url: Joi.string().regex(regex.uri).required()
+    }).required(),
+    repository: Joi.object({
+        url: Joi.string().regex(regex.uri).required()
+    }).required(),
+    authors: Joi.array().min(1).includes(Joi.object({
+        name: Joi.string().regex(regex.nameUTF).required(),
+        url: Joi.string().regex(regex.uri).optional()
+    })).required()
+});
 
 var parsers;
 (function (parsers) {
-    /* tslint:disable:max-line-length:*/
-    var id = P.regex(/[a-z]\w*/i);
-    var semver = P.regex(/v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)/, 1);
-    var anyChar = P.regex(/[\S]+/);
-    var anyStr = P.regex(/[\S\s]+/);
-    var chars = P.regex(/\S+/);
+    var id = P.regex(regex.label);
     var space = P.string(' ');
     var colon = P.string(':');
     var optColon = P.regex(/:?/);
     var line = P.regex(/\r?\n/);
-    var lineT = P.regex(/ *\r?\n/);
 
-    // https://stackoverflow.com/questions/6927719/url-regex-does-not-work-in-javascript
-    var uriLib = P.regex(/((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i);
-    var uriBracket = P.string('<').then(uriLib).skip(P.string('>'));
+    var uri = P.regex(regex.uri);
+    var uriBracket = P.string('<').then(uri).skip(P.string('>'));
 
-    var bom = P.regex(/\uFEFF/);
     var bomOpt = P.regex(/\uFEFF?/);
 
     var comment = P.string('//');
     var comment3 = P.string('///');
 
-    // global unity by unicode
-    var nameUTF = P.regex(XRegExp('\\p{L}+(?:[ -]\\p{L}+)*'));
+    var nameUTF = P.regex(regex.nameUTF);
 
-    parsers.author = nameUTF.skip(space).then(function (n) {
-        return uriBracket.or(P.succeed(null)).map(function (u) {
+    parsers.author = nameUTF.then(function (n) {
+        return space.then(uriBracket).or(P.succeed(null)).map(function (u) {
             var ret = {
                 name: n,
-                url: u
+                url: untrail(u)
             };
             return ret;
         });
     });
 
-    var authorSeparator = P.string(',').then(P.string(' ').or(P.regex(/\r?\n\/\/[ \t]*/, 0)));
+    var authorSeparator = P.string(',').then(P.regex(/ ?\r?\n\/\/[ \t]*/).or(P.string(' ')));
 
-    /* tslint:enable:max-line-length:*/
-    parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).then(function (n) {
-        return space.then(semver).or(P.succeed(null)).map(function (v) {
-            var ret = {
-                name: n,
-                version: v
-            };
-            return ret;
-        });
+    parsers.label = comment.then(space).then(P.string('Type definitions for')).then(optColon).then(space).then(id).map(function (nn) {
+        // TODO move semver extractor to sub-parser
+        regex.semverExtract.lastIndex = 0;
+        var extr = regex.semverExtract.exec(nn);
+        var ret = extr ? {
+            name: extr[1],
+            version: extr[2] || null
+        } : {
+            name: nn,
+            version: null
+        };
+        return ret;
     });
 
-    parsers.project = comment.then(space).then(P.string('Project')).then(colon).then(space).then(uriLib).map(function (u) {
+    parsers.project = comment.then(space).then(P.string('Project')).then(colon).then(space).then(uri).map(function (u) {
         var ret = {
-            url: u
+            url: untrail(u)
         };
         return ret;
     });
@@ -96,9 +143,9 @@ var parsers;
         });
     });
 
-    parsers.repo = comment.then(space).then(P.string('Definitions')).then(colon).then(space).then(uriLib).map(function (u) {
+    parsers.repo = comment.then(space).then(P.string('Definitions')).then(colon).then(space).then(uri).map(function (u) {
         var ret = {
-            url: u
+            url: untrail(u)
         };
         return ret;
     });
@@ -121,45 +168,92 @@ function parse(source) {
 }
 exports.parse = parse;
 
-// should be a json-schema?
+function serialise(header) {
+    exports.assert(header);
+
+    var ret = [];
+    ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
+    ret.push('// Project: ' + header.project.url);
+    ret.push('// Definitions by: ' + header.authors.map(function (author) {
+        return author.name + (author.url ? ' <' + author.url + '>' : '');
+    }).join(', '));
+    ret.push('// Definitions: ' + header.repository.url);
+    return ret;
+}
+exports.serialise = serialise;
+
 function assert(header) {
-    assertions.object(header, 'header');
+    headerSchema.validate(header, null, function (err) {
+        if (err) {
+            console.log('Header assert error');
+            console.log(err);
 
-    assertions.object(header.label, 'header.label');
-    assertions.string(header.label.name, 'header.label.name');
-    if (header.label.version) {
-        assertions.string(header.label.version, 'header.label.url');
-    }
-    assertions.object(header.project, 'header.project');
-    assertions.string(header.project.url, 'header.project.url');
-
-    assertions.object(header.repository, 'header.repository');
-    assertions.string(header.repository.url, 'header.repository.url');
-
-    assertions.array(header.authors, 'header.authors');
-    assertions.ok(header.authors.length > 0, 'header.authors.length > 0');
-
-    header.authors.forEach(function (author, i) {
-        assertions.string(author.name, 'author[' + i + '].name');
-        assertions.string(author.url, 'author[' + i + '].url');
+            throw err;
+        }
     });
-
-    return null;
 }
 exports.assert = assert;
 
-// need json-schema (try using typson on interfaces)
-function analise(header) {
-    return null;
+var lineExp = /\r?\n/g;
+
+function getLines(stream, start, end) {
+    if (typeof end === "undefined") { end = 0; }
+    // TODO improve line grabber (remove horrible split for top-down line parser)
+    var arr = stream.split(lineExp);
+    start = Math.max(start, 0);
+    if (!end) {
+        end = arr.length - 1;
+    } else {
+        end = Math.min(end, arr.length - 1);
+    }
+    end = Math.max(end, start + 1);
+    return arr.slice(start, end + 1);
 }
-exports.analise = analise;
+
+function untrail(str) {
+    if (!str) {
+        return str;
+    }
+    return str.replace(/\/$/, '');
+}
+
+function pointer(col) {
+    var str = '';
+    for (var i = 0; i < col - 1; i++) {
+        str += '-';
+    }
+    return str + '^';
+}
+
+function highlightPos(stream, row, col) {
+    var lines = getLines(stream, 0, row + 2);
+    if (typeof col === 'number') {
+        lines.splice(row + 1, 0, pointer(col));
+    }
+    return lines.join('\n');
+}
+exports.highlightPos = highlightPos;
+
+function linkPos(dest, row, col, add) {
+    if (typeof add === "undefined") { add = false; }
+    if (typeof col !== 'number') {
+        col = 0;
+    }
+    if (typeof row !== 'number') {
+        row = 0;
+    }
+    if (add) {
+        col += 1;
+        row += 1;
+    }
+    return path.resolve(path.normalize(dest)) + '[' + row + ',' + col + ']';
+}
+exports.linkPos = linkPos;
 
 function fromPackage(pkg) {
     assertions.object(pkg, 'pkg');
-    assertions.string(pkg.name, 'pkg.version');
-    assertions.string(pkg.version, 'pkg.version');
-    assertions.string(pkg.homepage, 'pkg.homepage');
 
+    // naively set values
     var header = {
         label: {
             name: pkg.name,
@@ -175,28 +269,13 @@ function fromPackage(pkg) {
             if (typeof auth === 'string') {
                 auth = parsers.author.parse(auth);
             }
-            assertions.object(auth, auth);
-            assertions.string(auth.name, 'auth.name');
-            assertions.string(auth.url, 'auth.url');
             return auth;
         })
     };
+
+    // do shared deep assertion
     exports.assert(header);
     return header;
 }
 exports.fromPackage = fromPackage;
-
-function serialise(header) {
-    exports.assert(header);
-
-    var ret = [];
-    ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' ' + header.label.version : ''));
-    ret.push('// Project: ' + header.project.url);
-    ret.push('// Definitions by: ' + header.authors.map(function (author) {
-        return author.name + (author.url ? ' <' + author.url + '>' : '');
-    }).join(', '));
-    ret.push('// Definitions: ' + header.repository.url);
-    return ret;
-}
-exports.serialise = serialise;
 //# sourceMappingURL=index.js.map

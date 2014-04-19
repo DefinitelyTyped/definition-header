@@ -1,12 +1,12 @@
 ---
   parsed:
     label:
-      name: "expect.js 0.2.0"
+      name: "expect.js"
       version: "0.2.0"
     project:
       url:  "https://github.com/LearnBoost/expect.js"
-    authors: 
-      - 
+    authors:
+      -
         name: "Teppei Sato"
         url: "https://github.com/teppeis"
     repository:

@@ -1,13 +1,13 @@
 ---
   parsed:
     label:
-      name: "linq.jquery"
+      name: linq.jquery (from linq.js)
       version: null
     project:
       url:  "http://linqjs.codeplex.com"
-    authors: 
-      - 
+    authors:
+      -
         name: "neuecc"
         url: "http://www.codeplex.com/site/users/view/neuecc"
     repository:
-      url:  ""
+      url: "https://github.com/borisyankov/DefinitelyTyped"

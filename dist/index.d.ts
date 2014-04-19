@@ -30,9 +30,10 @@ declare module "definition-header" {
         url: string;
     }
     export function parse(source: string): Header;
-    export function assert(header: Header): any;
-    export function analise(header: Header): any;
-    export function fromPackage(pkg: any): Header;
     export function serialise(header: Header): string[];
+    export function assert(header: Header): void;
+    export function highlightPos(stream: string, row: number, col?: number): string;
+    export function linkPos(dest: string, row?: number, col?: number, add?: boolean): string;
+    export function fromPackage(pkg: any): Header;
 
 }

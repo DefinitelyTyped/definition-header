@@ -80,6 +80,9 @@ declare module 'parsimmon' {
 		export function regex(myregex: RegExp, group?: number): Parser<string>;
 		export function regex(myregex: RegExp, group?: string): Parser<string>;
 
+		// custom hack
+		export function regexs(myregex: RegExp): Parser<string[]>;
+
 		/*
 		 is a parser that doesn't consume any of the string, and yields result.
 		 */

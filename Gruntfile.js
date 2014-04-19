@@ -3,6 +3,8 @@ module.exports = function (grunt) {
 
 	var path = require('path');
 
+	require('source-map-support').install();
+
 	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-tslint');
 	grunt.loadNpmTasks('grunt-shell');
