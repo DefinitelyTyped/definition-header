@@ -1,7 +1,11 @@
+/* jshint -W098 */
+/* jshint -W083 */
+
 module.exports = function (grunt) {
 	'use strict';
 
 	var path = require('path');
+	var assert = require('assert');
 
 	require('source-map-support').install();
 
@@ -10,10 +14,23 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-wrap');
 	grunt.loadNpmTasks('grunt-typescript-export');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadTasks('./tasks');
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		jshint: {
+			options: grunt.util._.extend(grunt.file.readJSON('.jshintrc'), {
+				reporter: './node_modules/jshint-path-reporter'
+			}),
+			support: {
+				options: {
+					node: true
+				},
+				src: ['Gruntfile.js', 'tasks/**/*.*.js']
+			}
+		},
 		tslint: {
 			options: {
 				configuration: grunt.file.readJSON('tslint.json'),
@@ -23,6 +40,9 @@ module.exports = function (grunt) {
 			test: ['test/src/**/*.ts']
 		},
 		clean: {
+			cruft: [
+				'tscommand-*.tmp.txt'
+			],
 			dist: [
 				'dist/**/*'
 			],
@@ -43,11 +63,11 @@ module.exports = function (grunt) {
 				comments: true,
 				verbose: true
 			},
-			index: {
+			build: {
 				options: {
 					noImplicitAny: true
 				},
-				src: ['src/index.ts'],
+				src: ['src/**/*.ts'],
 				outDir: 'dist/'
 			},
 			typings: {
@@ -82,64 +102,74 @@ module.exports = function (grunt) {
 		typescript_export: {
 			module: {
 				src: ['dist/*.d.ts'],
-				dest: 'dist/index.d.ts'
+				dest: 'dist/index_wrap.d.ts'
 			}
 		},
 		wrap: {
 			module: {
-				expand:  true,
+				expand: true,
 				src: ['index.d.ts'],
-				cwd:  'dist/',
+				cwd: 'dist/',
 				dest: 'dist/',
 				options: {
-					wrapper: function(filepath, options) {
+					wrapper: function (filepath, options) {
 						return ['declare module \'' + require('./package.json').name + '\' {\n', '\n}\n'];
 					}
 				}
 			},
 			index: {
-				expand:  true,
+				expand: true,
 				src: ['*.d.ts'],
-				cwd:  'dist/',
+				cwd: 'dist/',
 				dest: 'dist/',
 				options: {
-					wrapper: function(filepath, options) {
+					wrapper: function (filepath, options) {
 						return ['declare module \'' + path.basename(filepath).replace(/\.d\.ts$/, '') + '\' {\n', '\n}\n'];
 					}
 				}
 			}
+		},
+		export_declaration: {
+			index: {
+				options: {
+					main: 'dist/index.d.ts'
+				},
+				src: ['dist/**/*.d.ts']
+			}
 		}
-	});
-
-	grunt.registerTask('wrap_module', function() {
-		var head = require('./dist/index.js');
-		var pkg = require('./package.json');
-		var code = grunt.file.read('./dist/index.d.ts');
-
-		code = head.serialise(head.fromPackage(pkg)).join('\n') + '\n\n' + code;
-		grunt.file.write('./dist/index.d.ts', code);
 	});
 
 	grunt.registerTask('prep', [
 		'clean:tmp',
 		'clean:dist',
-		'clean:test'
+		'clean:test',
+		'jshint:support'
 	]);
+
 	grunt.registerTask('build', [
 		'prep',
-		'ts:index',
+		'ts:build',
 		'tslint:src',
-		'typescript_export:module',
-		'wrap_module'
+		// 'typescript_export:module',
+		'export_declaration:index',
+		'sweep',
 	]);
+
 	grunt.registerTask('test', [
 		'build',
 		'ts:tester',
 		'tslint:test',
 		'shell:index',
-		'shell:tester'
+		'shell:tester',
+		'sweep',
 	]);
+
+	grunt.registerTask('sweep', [
+		'clean:cruft'
+	]);
+
 	grunt.registerTask('dev', ['ts:typings']);
+	grunt.registerTask('debug', ['build']);
 
 	grunt.registerTask('default', ['build']);
 };

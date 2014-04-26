@@ -1,4 +1,4 @@
-// Type definitions for joi v3.1.0
+// Type definitions for joi v4.0.0
 // Project: https://github.com/spumko/joi
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -52,7 +52,10 @@ declare module 'joi' {
 
 	export interface AnySchema<T extends AnySchema<Schema>> {
 
-		validate<U>(value: U, options?: ValidationOptions, callback?: (err: ValidationError, value: U) => void): void;
+		validate<U>(value: U, options: ValidationOptions, callback: (err: ValidationError, value: U) => U): U;
+		validate<U>(value: U, callback: (err: ValidationError, value: U) => U): U;
+        validate<U>(value: U, options: ValidationOptions, callback: (err: ValidationError, value: U) => void): void;
+        validate<U>(value: U, callback: (err: ValidationError, value: U) => void): void;
 
 		/**
 		 * Whitelists a value
@@ -366,8 +369,15 @@ declare module 'joi' {
 	/**
 	 * Validates a value using the given schema and options.
 	 */
-	export function validate<T>(value: T, schema: Schema, options?: ValidationOptions, callback?: (err: ValidationError, value: T) => void): void;
-	export function validate<T>(value: T, schema: Object, options?: ValidationOptions, callback?: (err: ValidationError, value: T) => void): void;
+	export function validate<T, U>(value: T, schema: Schema, options: ValidationOptions, callback: (err: ValidationError, value: T) => U): U;
+	export function validate<T, U>(value: T, schema: Object, options: ValidationOptions, callback: (err: ValidationError, value: T) => U): U;
+    export function validate<T, U>(value: T, schema: Schema, callback: (err: ValidationError, value: T) => U): U;
+    export function validate<T, U>(value: T, schema: Object, callback: (err: ValidationError, value: T) => U): U;
+
+    export function validate<T>(value: T, schema: Schema, options: ValidationOptions, callback: (err: ValidationError, value: T) => void): void;
+    export function validate<T>(value: T, schema: Object, options: ValidationOptions, callback: (err: ValidationError, value: T) => void): void;
+    export function validate<T>(value: T, schema: Schema, callback: (err: ValidationError, value: T) => void): void;
+    export function validate<T>(value: T, schema: Object, callback: (err: ValidationError, value: T) => void): void;
 
 	/**
 	 * Converts literal schema definition to joi schema object (or returns the same back if already a joi schema object).

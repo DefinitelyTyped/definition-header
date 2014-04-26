@@ -2,8 +2,8 @@
 /.vagrant
 
 /node_modules
-/build/*.map
 
+/dist
 /cache
 /tsd-cache
 /test/tmp

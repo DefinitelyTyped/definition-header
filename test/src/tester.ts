@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+
 /// <reference path="../../dist/index.d.ts" />
 
 'use strict';
@@ -10,13 +11,13 @@ import fsori = require('fs');
 import Promise = require('bluebird');
 import yaml = require('js-yaml');
 import sms = require('source-map-support');
-import DH = require('definition-header');
 import exit = require('exit');
 import mkdirp = require('mkdirp');
 
 var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 sms.install();
 
+import DH = require('definition-header');
 var definitionHeader: typeof DH = require('../../dist/index');
 
 var DiffFormatter = require('unfunk-diff').DiffFormatter;
@@ -43,8 +44,8 @@ var fs = {
 	}
 };
 
-function getDiff() {
-
+function dump(v) {
+	console.log(util.inspect(v, {depth: 10}));
 }
 
 var baseDir = './test/fixtures';
@@ -100,7 +101,7 @@ function runTests(tests): Promise<any[]> {
 		]).spread((source, fields) => {
 			var result;
 			try {
-				var h = definitionHeader.parse(source);
+				var h = definitionHeader.parse(source, true);
 				result = {
 					pass: isDeepEqual(h, fields.parsed),
 					header: h
@@ -148,14 +149,14 @@ getTests(baseDir).then((groups) => {
 		console.log('');
 		report.results.forEach((res) => {
 			if (res.result.header) {
-				var serialised = definitionHeader.serialise(res.result.header).join('\n') + '\n';
+				var serialised = definitionHeader.stringify(res.result.header).join('\n') + '\n';
 				fs.writeSync(path.join(res.test.tmp, 'fields.yml'), yaml.dump(res.result.header, {indent: 2}));
 				fs.writeSync(path.join(res.test.tmp, 'header.txt'), serialised);
 			}
 		});
 		report.results.filter(res => !!res.result.pass).forEach((res) => {
 			if (res.result.header) {
-				var serialised = definitionHeader.serialise(res.result.header).join('\n') + '\n';
+				var serialised = definitionHeader.stringify(res.result.header).join('\n') + '\n';
 				console.log(serialised);
 			}
 		});
@@ -171,8 +172,8 @@ getTests(baseDir).then((groups) => {
 				if (res.result.error) {
 					var e = res.result.error;
 					if (e.position) {
-						console.log(definitionHeader.linkPos(path.join(res.test.full, 'header.txt'), e.position.row, e.position.col, true));
-						console.log(definitionHeader.highlightPos(e.stream, e.position.row, e.position.col));
+						console.log(definitionHeader.utils.linkPos(path.join(res.test.full, 'header.txt'), e.position.row, e.position.col, true));
+						console.log(definitionHeader.utils.highlightPos(e.stream, e.position.row, e.position.col));
 					}
 					console.log('---');
 				}
@@ -183,9 +184,12 @@ getTests(baseDir).then((groups) => {
 	if (!reports.every(report => report.failed === 0)) {
 		exit(1);
 	}
-	console.log('done!');
-	exit(0);
+	else {
+		console.log('done!');
+		exit(0);
+	}
 }).catch((e) => {
-	console.log(e);
+	console.error('final error:');
+	dump(e);
 	exit(2);
 });

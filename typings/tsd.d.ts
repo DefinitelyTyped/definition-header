@@ -6,4 +6,5 @@
 /// <reference path="source-map-support/source-map-support.d.ts" />
 /// <reference path="exit/exit.d.ts" />
 /// <reference path="joi/joi.d.ts" />
+/// <reference path="joi-assert/joi-assert.d.ts" />
 /// <reference path="mkdirp/mkdirp.d.ts" />
