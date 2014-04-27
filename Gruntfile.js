@@ -41,7 +41,10 @@ module.exports = function (grunt) {
 		},
 		clean: {
 			cruft: [
-				'tscommand-*.tmp.txt'
+				'tscommand-*.tmp.txt',
+				'dist/.baseDir*',
+				'test/tmp/.baseDir*',
+				'test/src/.baseDir*'
 			],
 			dist: [
 				'dist/**/*'

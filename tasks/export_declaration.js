@@ -3,6 +3,7 @@ module.exports = function (grunt) {
 
 	var path = require('path');
 	var assert = require('assert');
+	var detectIndent = require('detect-indent');
 
 	var dtsExp = /\.d\.ts$/;
 	var bomOptExp = /^\uFEFF?/;
@@ -92,20 +93,37 @@ module.exports = function (grunt) {
 		return line;
 	}
 
+	function getIndenter(actual, use) {
+		if (actual === use || !actual) {
+			return function(line) {
+				return String(line);
+			}
+		}
+		return function(line) {
+			return String(line).replace(new RegExp('^' + actual + '+', 'g'), function(match) {
+				return match.split(actual).join(use);
+			});
+		}
+	}
+
 	grunt.registerMultiTask('export_declaration', function () {
 		var options = this.options({
-			main: '.',
 			lb: '\r\n',
 			idt: '    ',
 			modSep: '/',
 			modPref: '__'
 		});
+		// collect main data
 		var header = require('../dist/index.js');
 		var pkg = grunt.file.readJSON('./package.json');
 
+		// main file
 		var main = path.resolve(options.main.replace(/\//g, path.sep));
 		var base = path.dirname(main);
 
+		assert(grunt.file.exists(main), 'main does not exist: ' + main);
+
+		// easy alias
 		var lb = options.lb;
 		var idt = options.idt;
 		var modSep = options.modSep;
@@ -134,14 +152,14 @@ module.exports = function (grunt) {
 		}
 
 		function getExpNameRaw(file) {
-			return modPref + pkg.name + modSep + cleanUpName(getModName(file));
+			return modPref + pkg.name + modSep + cleanupName(getModName(file));
 		}
 
 		function getLibName(ref) {
 			return getExpNameRaw(main) + modSep + modPref + modSep + ref;
 		}
 
-		function cleanUpName(name) {
+		function cleanupName(name) {
 			return name.replace(/\.\./g, '--').replace(/[\\\/]/g, modSep);
 		}
 
@@ -168,6 +186,7 @@ module.exports = function (grunt) {
 			var res = {
 				file: file,
 				name: name,
+				indent: detectIndent(code) || idt,
 				exp: getExpName(file),
 				refs: [],
 				relates: [],
@@ -316,17 +335,17 @@ module.exports = function (grunt) {
 		// add wrapped modules to output
 		out += collect.map(function (parse) {
 			used.push(parse.file);
-			//
 			if (parse === mainParse || selected.indexOf(parse.file) > -1) {
-				return formatModule(parse.file, parse.lines);
+				return formatModule(parse.file, parse.lines.map(getIndenter(parse.indent, idt)));
 			}
 			else {
-				return parse.lines.join(lb) + lb;
+				return parse.lines.map(getIndenter(parse.indent, idt)).join(lb) + lb;
 			}
 		}).join(lb) + lb;
 
 		// print some debug info
-		console.log('all');
+		/*
+		console.log('selected');
 		console.log(selected.map(function (p) {
 			return ' - ' + p;
 		}).join('\n'));
@@ -340,6 +359,15 @@ module.exports = function (grunt) {
 		}).map(function (p) {
 			return ' - ' + p;
 		}).join('\n'));
+		*/
+
+		// removed cruft
+		selected.map(function (p) {
+			// safety
+			if (p !== main && dtsExp.test(p) && grunt.file.isFile(p)) {
+				grunt.file.delete(p)
+			}
+		});
 
 		// write main file
 		grunt.file.write(main, out);
