@@ -2,22 +2,27 @@
 
 'use strict';
 
-import model = require('./model');
 import assertion = require('./assertion');
 import serialise = require('./serialise');
-import lax = require('./lax');
 
+import parseLax = require('./parser/lax');
+import parseStrict = require('./parser/strict');
+
+export import model = require('./model');
 export import importer = require('./importers/index');
 export import utils = require('./utils');
 
-// temp for testing
-export import schema = require('./schema');
-
-[utils, importer, schema];
+[model, importer, utils];
 
 export function parse(source: string, strict: boolean): model.Header {
 	// TODO add strict parser
-	var header: model.Header = lax.header.parse(source);
+	var header: model.Header;
+	/*if (strict) {
+		header = parseStrict.header.parse(source);
+	}
+	else {*/
+		header = parseLax.header.parse(source);
+	// }
 	return header;
 }
 

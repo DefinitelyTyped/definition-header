@@ -28,6 +28,9 @@
 		},
 		"mkdirp/mkdirp.d.ts": {
 			"commit": "efec83fc9487e36f716d8e2aa64c34397570e921"
+		},
+		"pegjs/pegjs.d.ts": {
+			"commit": "7631e9eee41d57160ee10d600b04780770980343"
 		}
 	}
 }

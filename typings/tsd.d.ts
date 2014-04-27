@@ -8,3 +8,5 @@
 /// <reference path="joi/joi.d.ts" />
 /// <reference path="joi-assert/joi-assert.d.ts" />
 /// <reference path="mkdirp/mkdirp.d.ts" />
+/// <reference path="pegjs/pegjs.d.ts" />
+/// <reference path="pegjs/pegjs-override-action.d.ts" />

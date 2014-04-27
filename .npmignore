@@ -12,6 +12,7 @@
 /tsd-cache
 /util
 /lib
+/scratch
 
 /tsd-config.json
 /tsd.json

@@ -1,12 +1,12 @@
-/// <reference path="./../typings/tsd.d.ts" />
+/// <reference path="./../../typings/tsd.d.ts" />
 
 'use strict';
 
 import P = require('parsimmon');
 
-import model = require('./model');
-import regex = require('./regex');
-import utils = require('./utils');
+import model = require('../model');
+import regex = require('../regex');
+import utils = require('../utils');
 
 var id = P.regex(regex.label);
 var space = P.string(' ');

@@ -4,7 +4,7 @@
 
 import model = require('../model');
 import assertion = require('../assertion');
-import lax = require('../lax');
+import lax = require('../parser/lax');
 
 export function collectPersons(json: any): model.Person[] {
 	if (typeof json === 'string') {

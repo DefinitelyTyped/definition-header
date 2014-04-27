@@ -28,9 +28,11 @@
     "node": ">= 0.10.0 < 0.11.0"
   },
   "scripts": {
+    "prepublish": "grunt prepublish",
+    "build": "grunt build",
     "test": "grunt test"
   },
-  "main": "./dist/index.js",
+  "main": "./index.js",
   "typescript": {
     "main": "./src/index.ts",
     "definition": "./dist/index.d.ts"
@@ -52,16 +54,15 @@
     "tslint-path-formatter": "~0.1.0",
     "grunt-shell": "~0.6.4",
     "js-yaml": "~3.0.2",
-    "grunt-wrap": "~0.3.0",
     "unfunk-diff": "0.0.2",
     "ministyle": "~0.1.3",
     "deep-eql": "~0.1.3",
     "bluebird": "~1.1.1",
     "exit": "^0.1.2",
-    "grunt-typescript-export": "git://github.com/Bartvds/grunt-typescript-export.git",
     "mkdirp": "^0.3.5",
     "jshint-path-reporter": "^0.1.3",
     "grunt-contrib-jshint": "^0.10.0",
-    "detect-indent": "^0.1.3"
+    "detect-indent": "^0.1.3",
+    "grunt-regex-replace": "^0.2.6"
   }
 }
