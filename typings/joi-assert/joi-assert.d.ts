@@ -8,8 +8,8 @@
 declare module 'joi-assert' {
 	import Joi = require('joi');
 
-	function joiAssert<U>(value: any, schema: Joi.Schema, message?: string, vars?: any): any;
 	function joiAssert<U>(value: U, schema: Joi.Schema, message?: string, vars?: any): U;
+	function joiAssert<U>(value: any, schema: Joi.Schema, message?: string, vars?: any): any;
 
 	module joiAssert {
 		export interface JoiAssertion<U> {

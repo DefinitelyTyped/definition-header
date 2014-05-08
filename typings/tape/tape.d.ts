@@ -33,7 +33,7 @@ declare module 'tape' {
 		/**
 		 * Create a stream of output, bypassing the default output stream that writes messages to console.log().
 		 */
-		export function createStream(opts?: any):ReadableStream;
+		export function createStream(opts?: any): NodeJS.ReadableStream;
 
 		interface Test {
 			/**
@@ -109,7 +109,6 @@ declare module 'tape' {
 			isNot(a: any, b: any, msg?: string): void;
 			not(a: any, b: any, msg?: string): void;
 			doesNotEqual(a: any, b: any, msg?: string): void;
-			notEqual(a: any, b: any, msg?: string): void;
 			isInequal(a: any, b: any, msg?: string): void;
 
 			/**

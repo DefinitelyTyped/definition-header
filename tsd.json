@@ -6,7 +6,7 @@
 	"bundle": "./typings/tsd.d.ts",
 	"installed": {
 		"node/node.d.ts": {
-			"commit": "a41665b6aa2b51d285fb597570e802a8063b5987"
+			"commit": "d8b512ed510dc47ff78fa3e0e64709088dd3b880"
 		},
 		"bluebird/bluebird.d.ts": {
 			"commit": "2f592be9e61a1720e4aa5178ee09e07c5c6bbad9"
