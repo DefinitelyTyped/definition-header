@@ -44,7 +44,7 @@
   "dependencies": {
     "joi": "^4.0.0",
     "joi-assert": "0.0.3",
-    "parsimmon": "git+https://github.com/Bartvds/parsimmon#prebuild",
+    "parsimmon": "^0.5.0",
     "xregexp": "~2.0.0"
   },
   "devDependencies": {

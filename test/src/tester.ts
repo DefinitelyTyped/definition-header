@@ -75,7 +75,7 @@ describe('utils', () => {
 			[8, {line: 3, column: 0}],
 		];
 		tests.forEach((test: any, i: number) => {
-			it('test' + i, () => {
+			it('test #' + i, () => {
 				assert.deepEqual(DH.utils.getPosition(str, test[0]), test[1]);
 			});
 		});
@@ -84,9 +84,25 @@ describe('utils', () => {
 
 describe('partials', () => {
 	describe('label', () => {
-		assertPartial(DH.parts.label, 'label', {
+		assertPartial(DH.parts.label, 'label-basic', {
 			name: 'FooModule',
 			version: '0.1.23'
+		});
+		assertPartial(DH.parts.label, 'label-modules', {
+			name: 'Angular JS (ngMock, ngMockE2E)',
+			version: '1.2'
+		});
+		assertPartial(DH.parts.label, 'label-modules-special', {
+			name: 'Angular JS (ui.router module)',
+			version: '1.2'
+		});
+		assertPartial(DH.parts.label, 'label-plus', {
+			name: 'Angular JS',
+			version: '1.2'
+		});
+		assertPartial(DH.parts.label, 'label-simple', {
+			name: 'FooModule',
+			version: null
 		});
 	});
 
@@ -201,9 +217,10 @@ describe('headers', () => {
 
 				var dumpDir = path.join(tmpDir, testName);
 				mkdirp.sync(dumpDir);
-				var serialised = DH.stringify(result.value).join('\n') + '\n';
+
+				/*var serialised = DH.stringify(result.value).join('\n') + '\n';
 				fs.writeFileSync(path.join(dumpDir, 'fields.yml'), yaml.safeDump(serialised), {indent: 2});
-				fs.writeFileSync(path.join(dumpDir, 'header.txt'), serialised);
+				fs.writeFileSync(path.join(dumpDir, 'header.txt'), serialised);*/
 
 				assert.deepEqual(result.value, fields.parsed);
 			}
@@ -211,13 +228,16 @@ describe('headers', () => {
 	});
 });
 
-describe.skip('repos', () => {
+describe('repos', () => {
+	if (!fs.existsSync(repoDir)) {
+		return;
+	}
+
 	var files = glob.sync('*/*.d.ts', {
 		cwd: repoDir
 	});
 
 	files.sort();
-
 	files = files.slice(0, 100);
 
 	files.forEach((file) => {
@@ -229,6 +249,7 @@ describe.skip('repos', () => {
 			if (!result.success) {
 				console.log('\n' + result.details + '\n');
 			}
+			assert.isTrue(result.success);
 		});
 	});
 });

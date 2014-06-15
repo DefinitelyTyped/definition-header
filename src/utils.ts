@@ -64,6 +64,7 @@ export function charPointer(column: number): string {
 	return longString.substr(0, column) + '^';
 }
 
+// TODO harden for deeper lines
 export function highlightPos(stream: string, line: number, column?: number): string {
 	var lines = getLinesAt(stream, 0, line + 2);
 	if (typeof column === 'number') {

@@ -1,0 +1,1 @@
+// Type definitions for Angular JS 1.2 (ngMock, ngMockE2E)

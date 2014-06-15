@@ -10,6 +10,7 @@ import utils = require('../utils');
 
 
 var id = P.regex(regex.label).desc('project name');
+var semver = P.regex(regex.semverV).desc('semver');
 var space = P.string(' ');
 var colon = P.string(':');
 var optColon = P.regex(/:?/);
@@ -49,6 +50,18 @@ var separatorOptComma = P.seq(P.string(','), space)
 		.then(optTabSpace)
 );
 
+var separatorProject = P.seq(P.string(','), space)
+	.or(optTabSpace
+		.then(optComma)
+		.then(linebreak)
+		.then(comment)
+		.then(tabSpace)
+		.then(P.seq(
+			P.string('Project:'),
+			tabSpace
+		).or(optTabSpace))
+);
+
 export var person: P.Parser<model.Person> = P.seq(
 	nameUTF,
 	P.alt(
@@ -64,8 +77,39 @@ export var person: P.Parser<model.Person> = P.seq(
 	.skip(optTabSpace);
 
 export var label: P.Parser<model.Label> = commentSpace
-	.then(P.string('Type definitions for'))
-	.then(space)
+	.then(P.string('Type definitions for '))
+	.then(P.seq(
+		id,
+		space.then(
+			P.string('(')
+				.then(P.seq(
+					id,
+					P.string(', ').then(id).many()
+				).map((arr: any[]) => {
+					return [arr[0]].concat(arr[1]);
+				}))
+				.skip(P.string(')'))
+		)
+		.or(P.succeed(null))
+	))
+	.map((arr: any[]) => {
+		regex.semverExtract.lastIndex = 0;
+		var match = regex.semverExtract.exec(arr[0]);
+		var semver: string = null;
+		var label: string = arr[0];
+		if (match) {
+			label = match[1];
+			semver = match[2];
+		}
+		return {
+			name: label + (arr[1] ? ' (' + arr[1].join(', ') + ')' : ''),
+			version: semver
+		};
+	})
+	.skip(optTabSpace);
+
+export var labelX: P.Parser<model.Label> = commentSpace
+	.then(P.string('Type definitions for '))
 	.then(id)
 	.map((str: string) => {
 		regex.semverExtract.lastIndex = 0;
@@ -78,11 +122,10 @@ export var label: P.Parser<model.Label> = commentSpace
 	.skip(optTabSpace);
 
 export var project: P.Parser<model.Project[]> = commentSpace
-	.then(P.string('Project:'))
-	.then(space)
+	.then(P.string('Project: '))
 	.then(P.seq(
 		url,
-		separatorOptComma.then(url).many()
+		separatorProject.then(url).many()
 	))
 	.map((arr: any) => {
 		var ret = [];
@@ -99,8 +142,7 @@ export var project: P.Parser<model.Project[]> = commentSpace
 	.skip(optTabSpace);
 
 export var authors: P.Parser<model.Author[]> = commentSpace
-	.then(P.string('Definitions by:'))
-	.then(space)
+	.then(P.string('Definitions by: '))
 	.then(P.seq(
 		person,
 		separatorComma.then(person).many()
@@ -113,8 +155,7 @@ export var authors: P.Parser<model.Author[]> = commentSpace
 	.skip(optTabSpace);
 
 export var repo: P.Parser<model.Repository> = commentSpace
-	.then(P.string('Definitions:'))
-	.then(space)
+	.then(P.string('Definitions: '))
 	.then(url)
 	.map((url) => {
 		return {
@@ -132,7 +173,7 @@ export var header: P.Parser<model.Header> = bomOpt
 	))
 	.skip(P.all)
 	.map((arr) => {
-		return {
+		return <model.Header> {
 			label: <model.Label> arr[0],
 			project: <model.Project[]> arr[1],
 			authors: <model.Author[]> arr[2],
