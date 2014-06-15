@@ -4,192 +4,170 @@
 
 'use strict';
 
-import assert = require('assert');
+import fs = require('fs');
 import path = require('path');
 import util = require('util');
-import fsori = require('fs');
-import Promise = require('bluebird');
+
+import P = require('parsimmon');
+import glob = require('glob');
 import yaml = require('js-yaml');
 import sms = require('source-map-support');
-import exit = require('exit');
 import mkdirp = require('mkdirp');
+
+import chai = require('chai');
+
+var assert = chai.assert;
 
 var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 sms.install();
 
-import DH = require('definition-header');
-var definitionHeader: typeof DH = require('../../dist/index');
+import DefinitionHeader = require('definition-header');
+var DH: typeof DefinitionHeader = require('../../dist/index');
 
-var DiffFormatter = require('unfunk-diff').DiffFormatter;
-var style = require('ministyle').ansi();
-var formatter = new DiffFormatter(style, 80);
+var testDir = path.resolve(__dirname, '..');
+var specDir = path.join(testDir, 'fixtures');
+var tmpDir = path.join(testDir, 'tmp');
 
-var fs = {
-	readFile: Promise.promisify(fsori.readFile),
-	readYaml: function (src) {
-		return fs.readFile(src, {encoding: 'utf8'}).then((content) => {
-			return yaml.safeLoad(content, {
-				filename: src
-			});
-		});
-	},
-	readUTF8: function (src) {
-		return fs.readFile(src, {encoding: 'utf8'});
-	},
-	readdir: Promise.promisify(fsori.readdir),
-	stat: Promise.promisify(fsori.stat),
-	writeSync: function(dest: string, content) {
-		mkdirp.sync(path.dirname(dest));
-		fsori.writeFileSync(dest, content);
-	}
-};
+var lineBreak = P.regex(/\r?\n/).desc('linebreak');
+
+function readFields(targetPath) {
+	var fieldsPath = path.join(path.dirname(targetPath), 'fields.yml');
+	return yaml.safeLoad(fs.readFileSync(fieldsPath, {encoding: 'utf8'}), {
+		filename: fieldsPath
+	});
+}
 
 function dump(v) {
-	console.log(util.inspect(v, {depth: 10}));
+	console.log(yaml.safeDump(v));
 }
 
-var baseDir = './test/fixtures';
-
-function getDirs(base: string): Promise<string[]> {
-	return fs.readdir(base).then((files: string[]) => {
-		return Promise.filter(files, (file) => {
-			return fs.stat(path.join(base, file)).then((stat) => {
-				return stat.isDirectory();
-			});
-		});
+function assertPartial<T>(parser: any, name: string, value: any) {
+	it(name, () => {
+		var sourceData = fs.readFileSync(path.join(specDir, 'partials', name, 'header.txt'), {encoding: 'utf8'});
+		var actual = parser.skip(lineBreak).parse(sourceData);
+		var expected = {
+			status: true,
+			value: value
+		};
+		assert.deepEqual(actual, expected);
 	});
 }
 
-function getFiles(base: string): Promise<string[]> {
-	return fs.readdir(base).then((files: string[]) => {
-		return Promise.filter(files, (file) => {
-			return fs.stat(path.join(base, file)).then((stat) => {
-				return stat.isFile();
-			});
+describe('partials', () => {
+	describe('label', () => {
+		assertPartial(DH.parts.label, 'label', {
+			name: 'FooModule',
+			version: '0.1.23'
 		});
 	});
-}
 
-function getTests(base): Promise<any[]> {
-	return fs.readYaml(path.join(base, 'conf.yml')).catch((e) => {
-		return {};
-	}).then((conf) => {
-		return getDirs(base).map((group) => {
-			return getDirs(path.join(base, group)).then((tests: string[]) => {
-				return {
-					name: group,
-					conf: conf,
-					tests: tests.map((name: string) => {
-						return {
-							group: group,
-							name: name,
-							full: path.resolve(base, group, name),
-							tmp: path.resolve(base, '..', 'tmp', group, name)
-						};
-					})
-				};
-			});
+	describe('project', () => {
+		assertPartial(DH.parts.project, 'project', {
+			url: 'http://foo.org'
 		});
 	});
-}
 
-function runTests(tests): Promise<any[]> {
-	return Promise.map(tests, (test: any) => {
-		return Promise.all([
-			fs.readUTF8(path.join(test.full, 'header.txt')),
-			fs.readYaml(path.join(test.full, 'fields.yml'))
-		]).spread((source, fields) => {
-			var result;
-			try {
-				var h = definitionHeader.parse(source, true);
-				result = {
-					pass: isDeepEqual(h, fields.parsed),
-					header: h
-				};
-			}
-			catch (e) {
-				result = {
-					pass: (typeof fields.valid !== 'undefined' && fields.valid === false) ? true : false,
-					error: e
-				};
-			}
-			return {
-				test: test,
-				source: source,
-				fields: fields,
-				result: result
-			};
+	describe('person', () => {
+		assertPartial(DH.parts.person, 'person-name-single', {
+			name: 'Jimmy',
+			url: null
+		});
+		assertPartial(DH.parts.person, 'person-name-space', {
+			name: 'Jimmy Foo',
+			url: null
+		});
+		assertPartial(DH.parts.person, 'person-name-special', {
+			name: 'Gia Bảo @ Sân Đình',
+			url: null
+		});
+
+		assertPartial(DH.parts.person, 'person-url-single', {
+			name: 'Jimmy',
+			url: 'https://github.xyz/x/foo'
+		});
+		assertPartial(DH.parts.person, 'person-url-space', {
+			name: 'Jimmy Foo',
+			url: 'https://github.xyz/x/foo'
+		});
+		assertPartial(DH.parts.person, 'person-url-special', {
+			name: 'Gia Bảo @ Sân Đình',
+			url: 'https://github.com/giabao'
 		});
 	});
-}
 
-getTests(baseDir).then((groups) => {
-	var dirs = ['core', 'debug', 'practical'];
-
-	return Promise.all(groups.filter((group) => {
-		return dirs.indexOf(group.name) > -1;
-	}).map((group) => {
-		return runTests(group.tests).then((results) => {
-			return {
-				group: group,
-				failed: results.reduce((memo, res) => {
-					return memo + (res.result.pass ? 0 : 1);
-				}, 0),
-				results: results
-			};
-		});
-	}));
-}).then((reports: any[]) => {
-	// console.log(util.inspect(reports, false, 10));
-
-	reports.forEach((report) => {
-		console.log('');
-		console.log(report.group.name);
-		console.log('   passed %d of %d', report.results.length - report.failed, report.results.length);
-		console.log('');
-		report.results.forEach((res) => {
-			if (res.result.header) {
-				var serialised = definitionHeader.stringify(res.result.header).join('\n') + '\n';
-				fs.writeSync(path.join(res.test.tmp, 'fields.yml'), yaml.dump(res.result.header, {indent: 2}));
-				fs.writeSync(path.join(res.test.tmp, 'header.txt'), serialised);
+	describe('authors', () => {
+		assertPartial(DH.parts.authors, 'authors-single', [
+			{
+				name: 'Jimmy Foo',
+				url: 'https://github.xyz/x/foo'
 			}
-		});
-		report.results.filter(res => !!res.result.pass).forEach((res) => {
-			if (res.result.header) {
-				var serialised = definitionHeader.stringify(res.result.header).join('\n') + '\n';
-				console.log(serialised);
+		]);
+		assertPartial(DH.parts.authors, 'authors-separated', [
+			{
+				name: 'Jimmy Foo',
+				url: 'https://github.xyz/x/foo'
+			},
+			{
+				name: 'Billy Bar',
+				url: 'https://github.xyz/bar'
 			}
-		});
+		]);
+		assertPartial(DH.parts.authors, 'authors-multiline', [
+			{
+				name: 'Jimmy Foo',
+				url: 'https://github.xyz/x/foo'
+			},
+			{
+				name: 'Billy Bar',
+				url: 'https://github.xyz/bar'
+			}
+		]);
+	});
 
-		if (report.failed > 0) {
-			report.results.filter(res => !res.result.pass).forEach((res) => {
-				console.log(res.test.group + '/' + res.test.name);
-				console.log('---');
-				if (res.result.header) {
-					console.log(formatter.getStyledDiff(res.result.header, res.fields.parsed));
-					console.log('---');
+	describe('repo', () => {
+		assertPartial(DH.parts.repo, 'repo', {
+			url: 'https://github.com/borisyankov/DefinitelyTyped'
+		});
+	});
+});
+
+describe('headers', () => {
+
+	var files = glob.sync('headers/*/header.txt', {
+		cwd: specDir
+	});
+
+	files.sort();
+	files.forEach((file) => {
+		var targetPath = path.join(specDir, file);
+		var testName = path.basename(path.dirname(file));
+
+		it(testName, () => {
+			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
+			var fields = readFields(targetPath);
+
+			// dump(sourceData);
+			// dump(fields);
+
+			var result: DefinitionHeader.Result = DH.parse(sourceData);
+			if (fields.valid === false) {
+				assert.isFalse(result.success, 'success');
+			}
+			else {
+				if (!result.success) {
+					dump(result);
 				}
-				if (res.result.error) {
-					var e = res.result.error;
-					if (e.position) {
-						console.log(definitionHeader.utils.linkPos(path.join(res.test.full, 'header.txt'), e.position.row, e.position.col, true));
-						console.log(definitionHeader.utils.highlightPos(e.stream, e.position.row, e.position.col));
-					}
-					console.log('---');
-				}
-				console.log('');
-			});
-		}
+				assert.isTrue(result.success, 'success');
+
+				var dumpDir = path.join(tmpDir, testName);
+				mkdirp.sync(dumpDir);
+				var serialised = DH.stringify(result.value).join('\n') + '\n';
+				fs.writeFileSync(path.join(dumpDir, 'fields.yml'), yaml.safeDump(serialised), {indent: 2});
+				fs.writeFileSync(path.join(dumpDir, 'header.txt'), serialised);
+
+				assert.deepEqual(result.value, fields.parsed);
+
+			}
+		});
 	});
-	if (!reports.every(report => report.failed === 0)) {
-		exit(1);
-	}
-	else {
-		console.log('done!');
-		exit(0);
-	}
-}).catch((e) => {
-	console.error('final error:');
-	dump(e);
-	exit(2);
 });

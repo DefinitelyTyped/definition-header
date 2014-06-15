@@ -114,7 +114,7 @@ module.exports = function (grunt) {
 			modPref: '__'
 		});
 		// collect main data
-		var header = require('../dist/index.js');
+		// var header = require('../dist/index.js');
 		var pkg = grunt.file.readJSON('./package.json');
 
 		// main file
@@ -329,8 +329,8 @@ module.exports = function (grunt) {
 
 		// output collected content
 		var out = '';
-		out += header.stringify(header.importer.packageJSON(pkg)).join(lb) + lb;
-		out += lb;
+		// out += header.stringify(header.importer.packageJSON(pkg)).join(lb) + lb;
+		// out += lb;
 
 		// add wrapped modules to output
 		out += collect.map(function (parse) {

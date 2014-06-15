@@ -5,7 +5,7 @@ module.exports = function (grunt) {
 
 	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-tslint');
-	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-regex-replace');
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
 				options: {
 					noImplicitAny: true
 				},
-				src: ['src/**/*.ts'],
+				src: ['src/index.ts'],
 				outDir: 'dist/'
 			},
 			typings: {
@@ -83,20 +83,12 @@ module.exports = function (grunt) {
 				outDir: 'test/tmp/'
 			}
 		},
-		shell: {
-			index: {
-				command: 'node ./index.js',
-				options: {
-					failOnError: true,
-					stdout: true
-				}
+		mochaTest: {
+			options: {
+				reporter: 'mocha-unfunk-reporter'
 			},
 			tester: {
-				command: 'node ./test/tmp/tester.js',
-				options: {
-					failOnError: true,
-					stdout: true
-				}
+				src: 'test/tmp/tester.js'
 			}
 		},
 		'regex-replace': {
@@ -161,9 +153,8 @@ module.exports = function (grunt) {
 	grunt.registerTask('test', [
 		'build',
 		'ts:tester',
+		'mochaTest:tester',
 		'tslint:test',
-		'shell:index',
-		'shell:tester',
 		'sweep',
 	]);
 

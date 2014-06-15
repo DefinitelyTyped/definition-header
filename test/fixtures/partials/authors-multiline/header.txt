@@ -1,0 +1,2 @@
+// Definitions by: Jimmy Foo <https://github.xyz/x/foo/>,
+//                 Billy Bar <https://github.xyz/bar/>

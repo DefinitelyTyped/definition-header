@@ -21,7 +21,7 @@
 			"commit": "18eab81e38aa3514dfc9daf06b1faac5e0186560"
 		},
 		"parsimmon/parsimmon.d.ts": {
-			"commit": "1f368c41873cc48ba648e1af1bd4dac77b512d9b"
+			"commit": "e9be9177f6ef097329e080c70010f81dab08bf4d"
 		},
 		"xregexp/xregexp.d.ts": {
 			"commit": "1f368c41873cc48ba648e1af1bd4dac77b512d9b"
@@ -31,6 +31,24 @@
 		},
 		"pegjs/pegjs.d.ts": {
 			"commit": "7631e9eee41d57160ee10d600b04780770980343"
+		},
+		"glob/glob.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+		},
+		"minimatch/minimatch.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+		},
+		"mocha/mocha.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+		},
+		"chai/chai.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+		},
+		"chai/chai-assert.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+		},
+		"joi/joi.d.ts": {
+			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
 		}
 	}
 }

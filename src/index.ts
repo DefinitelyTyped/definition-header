@@ -6,24 +6,47 @@ import assertion = require('./assertion');
 import serialise = require('./serialise');
 
 import parseLax = require('./parser/lax');
-import parseStrict = require('./parser/strict');
+
+import result = require('./parser/result');
+export import Result = result.ParseResult;
 
 export import model = require('./model');
 export import importer = require('./importers/index');
 export import utils = require('./utils');
 
+
 [model, importer, utils];
 
-export function parse(source: string, strict: boolean): model.Header {
+export var parts = parseLax;
+
+export function parse(source: string): Result {
 	// TODO add strict parser
 	var header: model.Header;
-	/*if (strict) {
-		header = parseStrict.header.parse(source);
+
+	var result = parseLax.header.parse(source);
+	var ret: Result = {
+		success: result.status
+	};
+	if (result.status) {
+		ret.value = result.value;
+		return ret;
 	}
-	else {*/
-		header = parseLax.header.parse(source);
-	// }
-	return header;
+	ret.index = result.index;
+
+	var pos = utils.getPosition(source, result.index);
+	ret.line = pos.line;
+	ret.column = pos.column;
+
+	ret.message = 'expected "' + result.expected.replace(/"/, '\"') + '" at line ' + pos.line + ', column ' + pos.column;
+
+	var details = '';
+
+	details += ret.message + '\n';
+	details += utils.highlightPos(source, pos.line, pos.column);
+
+	ret.details = details;
+
+	return ret;
 }
 
 export function stringify(header: model.Header): string[] {

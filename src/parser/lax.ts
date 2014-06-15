@@ -8,95 +8,107 @@ import model = require('../model');
 import regex = require('../regex');
 import utils = require('../utils');
 
-var id = P.regex(regex.label);
+
+var id = P.regex(regex.label).desc('project name');
 var space = P.string(' ');
 var colon = P.string(':');
 var optColon = P.regex(/:?/);
-var line = P.regex(/\r?\n/);
+var linebreak = P.regex(/\r?\n/).desc('linebreak');
+var lineTrail = P.regex(/[ \t]*\r?\n/).desc('linebreak');
+var optTabSpace = P.regex(/[ \t]*/).desc('tab or space');
 
-var uri = P.regex(regex.uri);
-var uriBracket = P.string('<').then(uri).skip(P.string('>'));
+var url = P.regex(regex.uri).desc('url');
+var urlBracket = P.string('<').then(url).skip(P.string('>'));
 
 var bomOpt = P.regex(regex.bomOpt);
 
-var comment = P.string('//');
-var comment3 = P.string('///');
+var comment = P.string('//').skip(space);
+var comment3 = P.string('///').skip(space);
 
-var nameUTF = P.regex(regex.nameUTF);
+var nameUTF = P.regex(regex.nameUTF).desc('name');
 
-var personSeparator = P.string(',').then(P.regex(/ ?\r?\n\/\/[ \t]*/).or(P.string(' ')));
+var authorSeparator = P.string(',').then(
+	P.regex(/ ?\r?\n\/\/[ \t]*/).desc('comment-linebreak').or(space)
+);
 
-export var person = nameUTF.then((n) => {
-	return space.then(uriBracket).or(P.succeed(null)).map((u) => {
-		var ret: model.Author = {
-			name: n,
-			url: u ? utils.untrail(u) : u
+export var person: P.Parser<model.Person> = P.seq(
+	nameUTF,
+	P.alt(
+		space.then(urlBracket),
+		P.succeed(null)
+	)
+)
+	.map((arr) => {
+		return {
+			name: arr[0],
+			url: arr[1] ? utils.untrail(arr[1]) : null
 		};
-		return ret;
-	});
-});
+	})
+	.skip(optTabSpace);
 
-export var label = comment
+export var label: P.Parser<model.Label> = comment
+	.then(P.string('Type definitions for'))
 	.then(space)
-	.then(P.string('Type definitions for')).then(optColon).then(space)
-	.then(id).map((nn) => {
-		// TODO move semver extractor to sub-parser
+	.then(id)
+	.map((str) => {
 		regex.semverExtract.lastIndex = 0;
-		var extr = regex.semverExtract.exec(nn);
-		var ret: model.Label = extr ? {
-			name: extr[1],
-			version: extr[2] || null
-		} : {
-			name: nn,
-			version: null
+		var extr = regex.semverExtract.exec(str);
+		return {
+			name: extr ? extr[1] : str,
+			version: extr && extr[2] ? extr[2] : null
 		};
-		return ret;
-	});
+	})
+	.skip(optTabSpace);
 
-export var project = comment
+export var project: P.Parser<model.Project> = comment
+	.then(P.string('Project:'))
 	.then(space)
-	.then(P.string('Project')).then(colon).then(space)
-	.then(uri).map((u) => {
-		var ret: model.Project = {
-			url: utils.untrail(u)
+	.then(url)
+	.map((url) => {
+		return {
+			url: utils.untrail(url)
 		};
-		return ret;
-	});
+	})
+	.skip(optTabSpace);
 
-export var authors = comment
+export var authors: P.Parser<model.Author[]> = comment
+	.then(P.string('Definitions by:'))
 	.then(space)
-	.then(P.string('Definitions by')).then(colon).then(space)
-	.then(person).then((a) => {
-		return personSeparator.then(person).many().or(P.succeed([])).map((arr) => {
-			arr.unshift(a);
-			return arr;
-		});
-	});
-
-export var repo = comment
-	.then(space)
-	.then(P.string('Definitions')).then(colon).then(space)
-	.then(uri).map((u) => {
-		var ret: model.Repository = {
-			url: utils.untrail(u)
-		};
-		return ret;
-	});
-
-export var header = bomOpt
 	.then(P.seq(
-		label.skip(line),
-		project.skip(line),
-		authors.skip(line),
-		repo.skip(line)
+		person,
+		authorSeparator.then(person).many()
 	))
-	.map((arr: any[]) => {
-		var ret: model.Header = {
-			label: arr[0],
-			project: arr[1],
-			authors: arr[2],
-			repository: arr[3]
-		};
+	.map((arr) => {
+		var ret = <model.Author[]> arr[1];
+		ret.unshift(<model.Author> arr[0]);
 		return ret;
 	})
-	.skip(P.all);
+	.skip(optTabSpace);
+
+export var repo: P.Parser<model.Repository> = comment
+	.then(P.string('Definitions:'))
+	.then(space)
+	.then(url)
+	.map((url) => {
+		return {
+			url: utils.untrail(url)
+		};
+	})
+	.skip(optTabSpace);
+
+export var header: P.Parser<model.Header> = bomOpt
+	.then(P.seq(
+		label.skip(linebreak),
+		project.skip(linebreak),
+		authors.skip(linebreak),
+		repo.skip(linebreak)
+	))
+	.skip(P.all)
+	.map((arr) => {
+		return {
+			label: <model.Label> arr[0],
+			project: <model.Project> arr[1],
+			authors: <model.Author[]> arr[2],
+			repository: <model.Repository> arr[3]
+		};
+	});

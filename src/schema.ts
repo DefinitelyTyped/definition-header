@@ -8,11 +8,11 @@ import model = require('./model');
 import regex = require('./regex');
 
 export var semver = Joi.string().regex(regex.semverC).description('semver');
-export var uri = Joi.string().regex(regex.uri).description('uri');
+export var uri = Joi.string().regex(regex.uri).description('url');
 
 export var label = Joi.object({
 	name: Joi.string().regex(regex.nameUTF).required(),
-	version: Joi.string().allow(null).regex(regex.semverC).optional().default(null)
+	version: Joi.string().allow(null).regex(regex.semverC).description('semver').optional()
 }).description('label');
 
 export var project = Joi.object({
