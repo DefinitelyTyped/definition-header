@@ -4,7 +4,8 @@
       name: "yui"
       version: "3.14.0"
     project:
-      url:  "https://github.com/yui/yui3"
+      -
+        url:  "https://github.com/yui/yui3"
     authors:
       -
         name: "Gia Bảo @ Sân Đình"

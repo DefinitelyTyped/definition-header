@@ -8,6 +8,7 @@ import XRegExp = X.XRegExp;
 /* tslint:disable:max-line-length:*/
 
 export var bom = /\uFEFF/;
+export var bomStart = /^\uFEFF/;
 export var bomOpt = /\uFEFF?/;
 
 // export var label = /[a-z](?:[ _\.-]?[a-z0-9]+)*/i;

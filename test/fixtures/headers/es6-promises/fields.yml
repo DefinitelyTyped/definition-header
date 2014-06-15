@@ -4,7 +4,8 @@
       name: "es6-promises"
       version: null
     project:
-      url:  "https://github.com/jakearchibald/ES6-Promises"
+      -
+        url:  "https://github.com/jakearchibald/ES6-Promises"
     authors:
       -
         name: "François de Campredon"

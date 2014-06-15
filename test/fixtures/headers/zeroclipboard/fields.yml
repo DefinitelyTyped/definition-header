@@ -4,7 +4,8 @@
       name: "ZeroClipboard"
       version: null
     project:
-      url:  "https://github.com/jonrohan/ZeroClipboard"
+      -
+        url:  "https://github.com/jonrohan/ZeroClipboard"
     authors: 
       - 
         name: "Eric J. Smith"

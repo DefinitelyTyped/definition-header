@@ -4,7 +4,8 @@
       name: "amCharts"
       version: null
     project:
-      url:  "http://www.amcharts.com"
+      -
+       url:  "http://www.amcharts.com"
     authors:
       -
         name: "aleksey-bykov"

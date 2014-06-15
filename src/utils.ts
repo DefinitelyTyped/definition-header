@@ -10,7 +10,7 @@ export interface Position {
 }
 
 export function getPosition(stream: string, index: number): Position {
-	var position = {
+	var position: Position = {
 		column: 0,
 		line: 0
 	};
@@ -18,13 +18,15 @@ export function getPosition(stream: string, index: number): Position {
 	var nextLineStart = 0;
 	lineExp.lastIndex = 0;
 
+	index = Math.min(index, stream.length - 1);
+
 	while ((match = lineExp.exec(stream))) {
 		if (lineExp.lastIndex > index) {
 			position.column = index - nextLineStart;
 			return position;
 		}
 		position.line += 1;
-		nextLineStart = lineExp.lastIndex + match[0].length + 1;
+		nextLineStart = lineExp.lastIndex;
 	}
 	position.column = index - nextLineStart;
 	return position;
@@ -59,7 +61,7 @@ export function charPointer(column: number): string {
 			longString += '-';
 		}
 	}
-	return longString.substr(0, column - 1) + '^';
+	return longString.substr(0, column) + '^';
 }
 
 export function highlightPos(stream: string, line: number, column?: number): string {

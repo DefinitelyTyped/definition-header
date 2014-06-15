@@ -4,7 +4,8 @@
       name: linq.jquery (from linq.js)
       version: null
     project:
-      url:  "http://linqjs.codeplex.com"
+      -
+        url:  "http://linqjs.codeplex.com"
     authors:
       -
         name: "neuecc"

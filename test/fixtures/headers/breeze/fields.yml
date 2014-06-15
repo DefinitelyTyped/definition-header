@@ -4,7 +4,8 @@
       name: "Breeze"
       version: "1.2.7"
     project:
-      url:  "http://www.breezejs.com"
+      -
+        url:  "http://www.breezejs.com"
     authors:
       -
         name: "Boris Yankov"

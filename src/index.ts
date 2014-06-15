@@ -4,6 +4,7 @@
 
 import assertion = require('./assertion');
 import serialise = require('./serialise');
+import regex = require('./regex');
 
 import parseLax = require('./parser/lax');
 
@@ -20,12 +21,13 @@ export import utils = require('./utils');
 export var parts = parseLax;
 
 export function parse(source: string): Result {
-	// TODO add strict parser
-	var header: model.Header;
+	if (regex.bomStart.test(source)) {
+		source = source.replace(regex.bomStart, '');
+	}
 
 	var result = parseLax.header.parse(source);
 	var ret: Result = {
-		success: result.status
+		success: !!result.status
 	};
 	if (result.status) {
 		ret.value = result.value;
@@ -37,12 +39,14 @@ export function parse(source: string): Result {
 	ret.line = pos.line;
 	ret.column = pos.column;
 
-	ret.message = 'expected "' + result.expected.replace(/"/, '\"') + '" at line ' + pos.line + ', column ' + pos.column;
+	ret.message = 'expected ' + result.expected.replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
 
 	var details = '';
 
-	details += ret.message + '\n';
+	details += ret.message + ':';
+	details += '\n\n';
 	details += utils.highlightPos(source, pos.line, pos.column);
+	details += '\n';
 
 	ret.details = details;
 

@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 	require('source-map-support').install();
 
 	grunt.loadNpmTasks('grunt-ts');
+	grunt.loadNpmTasks('grunt-ts-clean');
 	grunt.loadNpmTasks('grunt-tslint');
 	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -33,15 +34,18 @@ module.exports = function (grunt) {
 			src: ['src/**/*.ts'],
 			test: ['test/src/**/*.ts']
 		},
+		ts_clean: {
+			dist: {
+				src: ['dist/**/*', '!dist/index.d.ts'],
+				dot: true
+			}
+		},
 		clean: {
 			cruft: [
 				'tscommand-*.tmp.txt',
 				'dist/.baseDir*',
 				'test/tmp/.baseDir*',
 				'test/src/.baseDir*'
-			],
-			publish: [
-				'dist/**/*.js.map'
 			],
 			dist: [
 				'dist/**/*'
@@ -102,23 +106,6 @@ module.exports = function (grunt) {
 						flags: 'g'
 					}
 				]
-			},
-			dist: {
-				src: ['dist/**/*.js'],
-				actions: [
-					{
-						name: 'sourcemap',
-						search: '\\/\\/[#@] ?sourceMappingURL=.*?\r?\n',
-						replace: '',
-						flags: 'g'
-					},
-					{
-						name: 'reference',
-						search: '/// *<reference path=.*?/>.*?\r?\n',
-						replace: '',
-						flags: 'g'
-					}
-				]
 			}
 		},
 		export_declaration: {
@@ -142,12 +129,16 @@ module.exports = function (grunt) {
 		'jshint:support'
 	]);
 
-	grunt.registerTask('build', [
+	grunt.registerTask('compile', [
 		'prep',
 		'ts:build',
 		'tslint:src',
-		'export_declaration:index',
-		'sweep',
+		'export_declaration:index'
+	]);
+
+	grunt.registerTask('build', [
+		'compile',
+		'sweep'
 	]);
 
 	grunt.registerTask('test', [
@@ -155,19 +146,19 @@ module.exports = function (grunt) {
 		'ts:tester',
 		'mochaTest:tester',
 		'tslint:test',
-		'sweep',
+		'sweep'
 	]);
 
 	grunt.registerTask('sweep', [
-		'clean:cruft'
+		'clean:cruft',
+		'ts_clean:dist'
 	]);
 
 	grunt.registerTask('prepublish', [
 		'test',
 		'clean:tmp',
 		'clean:test',
-		'clean:publish',
-		'regex-replace:dist'
+		'regex-replace:cli'
 	]);
 
 	grunt.registerTask('dev', ['ts:typings']);

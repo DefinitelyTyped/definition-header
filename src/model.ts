@@ -1,6 +1,6 @@
 export interface Header {
 	label: Label;
-	project: Project;
+	project: Project[];
 	authors: Author[];
 	repository: Repository;
 }

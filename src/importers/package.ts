@@ -16,9 +16,11 @@ function importer(json: any): model.Header {
 			name: json.name,
 			version: json.version
 		},
-		project: {
-			url: json.homepage
-		},
+		project: [
+			{
+				url: json.homepage
+			}
+		],
 		repository: {
 			url: cnst.REPOSITORY
 		},

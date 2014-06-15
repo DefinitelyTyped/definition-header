@@ -4,8 +4,7 @@
     label:
       name: null
       version: null
-    project:
-      url: null
+    project: []
     authors: []
     repository:
       url: null

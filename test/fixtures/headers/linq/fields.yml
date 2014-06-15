@@ -4,7 +4,8 @@
       name: "linq.js"
       version: "2.2"
     project:
-      url:  "http://linqjs.codeplex.com"
+      -
+        url:  "http://linqjs.codeplex.com"
     authors:
       -
         name: "Marcin Najder"

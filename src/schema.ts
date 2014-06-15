@@ -31,7 +31,7 @@ export var repository = Joi.object({
 
 export var header = Joi.object({
 	label: label.required(),
-	project: project.required(),
+	project: Joi.array().min(1).includes(project).required(),
 	repository: repository.required(),
 	authors: Joi.array().min(1).includes(person).required()
 }).description('definition-header').options({

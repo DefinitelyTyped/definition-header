@@ -60,6 +60,7 @@
     "grunt-regex-replace": "^0.2.6",
     "grunt-shell": "~0.6.4",
     "grunt-ts": "^1.10.0",
+    "grunt-ts-clean": "^0.1.1",
     "grunt-tslint": "~0.4.1",
     "js-yaml": "~3.0.2",
     "jshint-path-reporter": "^0.1.3",

@@ -4,7 +4,8 @@
       name: "Microsoft.Windows.Azure.MobileService.Web"
       version: "1.0.0"
     project:
-      url:  "http://www.windowsazure.com/en-us/develop/mobile"
+      -
+        url:  "http://www.windowsazure.com/en-us/develop/mobile"
     authors:
       -
         name: "Morosinotto Daniele"

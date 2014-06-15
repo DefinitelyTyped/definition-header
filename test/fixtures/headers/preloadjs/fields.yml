@@ -4,7 +4,8 @@
       name: "PreloadJS"
       version: "0.4.1"
     project:
-      url:  "http://www.createjs.com/#!/PreloadJS"
+      -
+        url:  "http://www.createjs.com/#!/PreloadJS"
     authors: 
       - 
         name: "Pedro Ferreira"

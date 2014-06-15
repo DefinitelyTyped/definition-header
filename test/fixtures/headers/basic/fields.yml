@@ -4,7 +4,8 @@
       name: "FooModule"
       version: "0.1.23"
     project:
-      url: "http://foo.org"
+      -
+        url: "http://foo.org"
     authors:
       -
         name: "Jimmy Foo"

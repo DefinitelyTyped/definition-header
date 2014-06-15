@@ -4,7 +4,8 @@
       name: jQuery 1.10.x / 2.0.x
       version: null
     project:
-      url: "http://jquery.com"
+      -
+        url: "http://jquery.com"
     authors:
       -
         name: Boris Yankov

@@ -4,7 +4,8 @@
       name: "Web Audio API"
       version: null
     project:
-      url:  "http://www.w3.org/TR/2012/WD-webaudio-20121213"
+      -
+        url:  "http://www.w3.org/TR/2012/WD-webaudio-20121213"
     authors: 
       - 
         name: "Baruch Berger"
