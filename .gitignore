@@ -5,6 +5,7 @@
 
 /dist
 /cache
+/scratch
 /tsd-cache
 /test/tmp
 
