@@ -6,7 +6,7 @@
 
 Work with the headers in the definition files in the [DefinitelyTyped](https://github.com/borisyankov/DefinitelyTyped) repository. 
 
-Has a parser, serialiser, interfaces etc. 
+Bundles a parser, serialiser, interfaces, assertions and some utilities.
 
 :warning: Under construction, in-consistent, tests incomplete... :sunglasses:
 
@@ -40,6 +40,10 @@ $ npm test
 ````
 
 See the `Gruntfile.js` for additional commands.
+
+## History
+
+- 0.0.1 - First release
 
 ## License
 

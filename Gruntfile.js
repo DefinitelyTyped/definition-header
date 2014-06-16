@@ -9,7 +9,6 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-regex-replace');
 
 	grunt.loadTasks('./tasks');
 
@@ -74,16 +73,8 @@ module.exports = function (grunt) {
 				src: ['src/index.ts'],
 				outDir: 'dist/'
 			},
-			typings: {
-				options: {
-					fast: 'never',
-					noImplicitAny: true
-				},
-				src: ['typings/**/*.ts'],
-				outDir: 'tmp/'
-			},
-			tester: {
-				src: ['test/src/tester.ts'],
+			test: {
+				src: ['test/src/*.ts'],
 				outDir: 'test/tmp/'
 			}
 		},
@@ -91,21 +82,14 @@ module.exports = function (grunt) {
 			options: {
 				reporter: 'mocha-unfunk-reporter'
 			},
-			tester: {
-				src: 'test/tmp/tester.js'
-			}
-		},
-		'regex-replace': {
-			cli: {
-				src: ['dist/cli.js'],
-				actions: [
-					{
-						name: 'eol',
-						search: '\\r\\n',
-						replace: '\n',
-						flags: 'g'
-					}
-				]
+			all: {
+				src: 'test/tmp/*.test.js'
+			},
+			module: {
+				src: 'test/tmp/module.test.js'
+			},
+			repo: {
+				src: 'test/tmp/repo.test.js'
 			}
 		},
 		export_declaration: {
@@ -143,22 +127,25 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('test', [
 		'build',
-		'ts:tester',
-		'mochaTest:tester',
+		'ts:test',
+		'mochaTest:all',
 		'tslint:test',
 		'sweep'
+	]);
+
+	grunt.registerTask('prepublish', [
+		'build',
+		'ts:test',
+		'mochaTest:module',
+		'tslint:test',
+		'sweep',
+		'clean:tmp',
+		'clean:test'
 	]);
 
 	grunt.registerTask('sweep', [
 		'clean:cruft',
 		'ts_clean:dist'
-	]);
-
-	grunt.registerTask('prepublish', [
-		'test',
-		'clean:tmp',
-		'clean:test',
-		'regex-replace:cli'
 	]);
 
 	grunt.registerTask('dev', ['ts:typings']);

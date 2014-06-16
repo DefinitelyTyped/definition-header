@@ -18,7 +18,6 @@ import chai = require('chai');
 
 var assert = chai.assert;
 
-var isDeepEqual: (a: any, b: any) => boolean = require('deep-eql');
 sms.install();
 
 import DefinitionHeader = require('definition-header');
@@ -28,8 +27,6 @@ var testDir = path.resolve(__dirname, '..');
 var specDir = path.join(testDir, 'fixtures');
 var tmpDir = path.join(testDir, 'tmp');
 var repoDir = path.join(testDir, '..', 'repo');
-
-var lineBreak = P.regex(/\r?\n/).desc('linebreak');
 
 function readFields(targetPath) {
 	var fieldsPath = path.join(path.dirname(targetPath), 'fields.yml');
@@ -238,35 +235,6 @@ describe('headers', () => {
 
 				assert.deepEqual(result.value, fields.parsed);
 			}
-		});
-	});
-});
-
-describe('repos', () => {
-	if (!fs.existsSync(repoDir)) {
-		return;
-	}
-
-	var files = glob.sync('*/*.d.ts', {
-		cwd: repoDir
-	});
-
-	files.sort();
-
-	files.forEach((file) => {
-		var targetPath = path.join(repoDir, file);
-
-		it(file, () => {
-			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
-			var result = DH.parse(sourceData);
-			if (!result.success) {
-				if (DH.isPartial(sourceData)) {
-					return;
-				}
-				console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
-				console.log('\n' + result.details + '\n');
-			}
-			assert.isTrue(result.success);
 		});
 	});
 });
