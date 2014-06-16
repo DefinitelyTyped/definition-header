@@ -8,29 +8,20 @@
 		"node/node.d.ts": {
 			"commit": "d8b512ed510dc47ff78fa3e0e64709088dd3b880"
 		},
-		"bluebird/bluebird.d.ts": {
-			"commit": "2f592be9e61a1720e4aa5178ee09e07c5c6bbad9"
-		},
 		"js-yaml/js-yaml.d.ts": {
 			"commit": "18eab81e38aa3514dfc9daf06b1faac5e0186560"
 		},
 		"source-map-support/source-map-support.d.ts": {
 			"commit": "18eab81e38aa3514dfc9daf06b1faac5e0186560"
 		},
-		"exit/exit.d.ts": {
-			"commit": "18eab81e38aa3514dfc9daf06b1faac5e0186560"
-		},
 		"parsimmon/parsimmon.d.ts": {
-			"commit": "e9be9177f6ef097329e080c70010f81dab08bf4d"
+			"commit": "7573f56bec703a373ab307eeeb23aa0e0b4ee10f"
 		},
 		"xregexp/xregexp.d.ts": {
 			"commit": "1f368c41873cc48ba648e1af1bd4dac77b512d9b"
 		},
 		"mkdirp/mkdirp.d.ts": {
 			"commit": "efec83fc9487e36f716d8e2aa64c34397570e921"
-		},
-		"pegjs/pegjs.d.ts": {
-			"commit": "7631e9eee41d57160ee10d600b04780770980343"
 		},
 		"glob/glob.d.ts": {
 			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
@@ -48,7 +39,7 @@
 			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
 		},
 		"joi/joi.d.ts": {
-			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+			"commit": "7573f56bec703a373ab307eeeb23aa0e0b4ee10f"
 		}
 	}
 }

@@ -1,5 +1,5 @@
-// Type definitions for Parsimmon 0.4.0
-// Project: https://github.com/jayferd/parsimmon
+// Type definitions for Parsimmon 0.5.0
+// Project: https://github.com/jneen/parsimmon
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
