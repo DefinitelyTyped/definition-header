@@ -76,8 +76,7 @@ export var person: P.Parser<model.Person> = P.seq(
 	})
 	.skip(optTabSpace);
 
-export var label: P.Parser<model.Label> = commentSpace
-	.then(P.string('Type definitions for '))
+export var label: P.Parser<model.Label> = P.string('// Type definitions for ')
 	.then(P.seq(
 		id,
 		space.then(
@@ -108,8 +107,7 @@ export var label: P.Parser<model.Label> = commentSpace
 	})
 	.skip(optTabSpace);
 
-export var labelX: P.Parser<model.Label> = commentSpace
-	.then(P.string('Type definitions for '))
+export var labelX: P.Parser<model.Label> = P.string('// Type definitions for ')
 	.then(id)
 	.map((str: string) => {
 		regex.semverExtract.lastIndex = 0;
@@ -121,8 +119,7 @@ export var labelX: P.Parser<model.Label> = commentSpace
 	})
 	.skip(optTabSpace);
 
-export var project: P.Parser<model.Project[]> = commentSpace
-	.then(P.string('Project: '))
+export var project: P.Parser<model.Project[]> = P.string('// Project: ')
 	.then(P.seq(
 		url,
 		separatorProject.then(url).many()
@@ -141,8 +138,7 @@ export var project: P.Parser<model.Project[]> = commentSpace
 	})
 	.skip(optTabSpace);
 
-export var authors: P.Parser<model.Author[]> = commentSpace
-	.then(P.string('Definitions by: '))
+export var authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
 	.then(P.seq(
 		person,
 		separatorComma.then(person).many()
@@ -154,8 +150,7 @@ export var authors: P.Parser<model.Author[]> = commentSpace
 	})
 	.skip(optTabSpace);
 
-export var repo: P.Parser<model.Repository> = commentSpace
-	.then(P.string('Definitions: '))
+export var repo: P.Parser<model.Repository> = P.string('// Definitions: ')
 	.then(url)
 	.map((url) => {
 		return {

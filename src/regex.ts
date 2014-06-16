@@ -33,5 +33,6 @@ export var name = /[a-z][a-z0-9]*(?:(?:\. |[ _\.\/-]| [\/@-] )?[a-z0-9]+)*\.?/i;
 export var nameUTF = XRegExp('[\\p{L}0-9]+(?:(?:\\. |[ _\\.\\/-]| [\\/@-] )?[\\p{L}0-9]+)*\\.?');
 // export var nameUTF = XRegExp('\\p{L}+(?:[ \\.@-]\\p{L}+)*');
 
+export var partial = /^\uFEFF?\/\/ DefinitelyTyped: partial\s/;
 
 /* tslint:enable:max-line-length:*/

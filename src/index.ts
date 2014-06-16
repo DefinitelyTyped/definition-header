@@ -15,10 +15,13 @@ export import model = require('./model');
 export import importer = require('./importers/index');
 export import utils = require('./utils');
 
-
 [model, importer, utils];
 
 export var parts = parseLax;
+
+export function isPartial(source: string): boolean {
+	return regex.partial.test(source);
+}
 
 export function parse(source: string): Result {
 	if (regex.bomStart.test(source)) {

@@ -42,7 +42,7 @@ function dump(v) {
 	console.log(yaml.safeDump(v));
 }
 
-function assertPartial<T>(parser: any, name: string, value: any) {
+function assertPart<T>(parser: any, name: string, value: any) {
 	it(name, () => {
 		var sourceData = fs.readFileSync(path.join(specDir, 'partials', name, 'header.txt'), {encoding: 'utf8'});
 		var actual = parser.skip(P.all).parse(sourceData);
@@ -55,6 +55,20 @@ function assertPartial<T>(parser: any, name: string, value: any) {
 }
 
 describe('utils', () => {
+	describe('isPartial', () => {
+		it('detect partial', () => {
+			assert.isTrue(DH.isPartial('// DefinitelyTyped: partial '));
+		});
+		it('ignore without trailing', () => {
+			assert.isFalse(DH.isPartial('// DefinitelyTyped: partial'));
+		});
+		it('ignore without non-trailing', () => {
+			assert.isFalse(DH.isPartial('// DefinitelyTyped: partial-foo'));
+		});
+		it('ignore bad formed', () => {
+			assert.isFalse(DH.isPartial('// DefinitelyTyped: not-partial '));
+		});
+	});
 	describe('find correct position', () => {
 		var str = [
 			'a',
@@ -84,35 +98,35 @@ describe('utils', () => {
 
 describe('partials', () => {
 	describe('label', () => {
-		assertPartial(DH.parts.label, 'label-basic', {
+		assertPart(DH.parts.label, 'label-basic', {
 			name: 'FooModule',
 			version: '0.1.23'
 		});
-		assertPartial(DH.parts.label, 'label-modules', {
+		assertPart(DH.parts.label, 'label-modules', {
 			name: 'Angular JS (ngMock, ngMockE2E)',
 			version: '1.2'
 		});
-		assertPartial(DH.parts.label, 'label-modules-special', {
+		assertPart(DH.parts.label, 'label-modules-special', {
 			name: 'Angular JS (ui.router module)',
 			version: '1.2'
 		});
-		assertPartial(DH.parts.label, 'label-plus', {
+		assertPart(DH.parts.label, 'label-plus', {
 			name: 'Angular JS',
 			version: '1.2'
 		});
-		assertPartial(DH.parts.label, 'label-simple', {
+		assertPart(DH.parts.label, 'label-simple', {
 			name: 'FooModule',
 			version: null
 		});
 	});
 
 	describe('project', () => {
-		assertPartial(DH.parts.project, 'project-single', [
+		assertPart(DH.parts.project, 'project-single', [
 			{
 				url: 'http://foo.org'
 			}
 		]);
-		assertPartial(DH.parts.project, 'project-multiline', [
+		assertPart(DH.parts.project, 'project-multiline', [
 			{
 				url: 'http://foo.org'
 			},
@@ -123,41 +137,41 @@ describe('partials', () => {
 	});
 
 	describe('person', () => {
-		assertPartial(DH.parts.person, 'person-name-single', {
+		assertPart(DH.parts.person, 'person-name-single', {
 			name: 'Jimmy',
 			url: null
 		});
-		assertPartial(DH.parts.person, 'person-name-space', {
+		assertPart(DH.parts.person, 'person-name-space', {
 			name: 'Jimmy Foo',
 			url: null
 		});
-		assertPartial(DH.parts.person, 'person-name-special', {
+		assertPart(DH.parts.person, 'person-name-special', {
 			name: 'Gia Bảo @ Sân Đình',
 			url: null
 		});
 
-		assertPartial(DH.parts.person, 'person-url-single', {
+		assertPart(DH.parts.person, 'person-url-single', {
 			name: 'Jimmy',
 			url: 'https://github.xyz/x/foo'
 		});
-		assertPartial(DH.parts.person, 'person-url-space', {
+		assertPart(DH.parts.person, 'person-url-space', {
 			name: 'Jimmy Foo',
 			url: 'https://github.xyz/x/foo'
 		});
-		assertPartial(DH.parts.person, 'person-url-special', {
+		assertPart(DH.parts.person, 'person-url-special', {
 			name: 'Gia Bảo @ Sân Đình',
 			url: 'https://github.com/giabao'
 		});
 	});
 
 	describe('authors', () => {
-		assertPartial(DH.parts.authors, 'authors-single', [
+		assertPart(DH.parts.authors, 'authors-single', [
 			{
 				name: 'Jimmy Foo',
 				url: 'https://github.xyz/x/foo'
 			}
 		]);
-		assertPartial(DH.parts.authors, 'authors-separated', [
+		assertPart(DH.parts.authors, 'authors-separated', [
 			{
 				name: 'Jimmy Foo',
 				url: 'https://github.xyz/x/foo'
@@ -167,7 +181,7 @@ describe('partials', () => {
 				url: 'https://github.xyz/bar'
 			}
 		]);
-		assertPartial(DH.parts.authors, 'authors-multiline', [
+		assertPart(DH.parts.authors, 'authors-multiline', [
 			{
 				name: 'Jimmy Foo',
 				url: 'https://github.xyz/x/foo'
@@ -180,7 +194,7 @@ describe('partials', () => {
 	});
 
 	describe('repo', () => {
-		assertPartial(DH.parts.repo, 'repo', {
+		assertPart(DH.parts.repo, 'repo', {
 			url: 'https://github.com/borisyankov/DefinitelyTyped'
 		});
 	});
@@ -210,7 +224,6 @@ describe('headers', () => {
 			}
 			else {
 				if (!result.success) {
-					// dump(result);
 					console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
 					console.log('\n' + result.details + '\n');
 				}
@@ -239,7 +252,6 @@ describe('repos', () => {
 	});
 
 	files.sort();
-	files = files.slice(200, 800);
 
 	files.forEach((file) => {
 		var targetPath = path.join(repoDir, file);
@@ -248,6 +260,9 @@ describe('repos', () => {
 			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
 			var result = DH.parse(sourceData);
 			if (!result.success) {
+				if (DH.isPartial(sourceData)) {
+					return;
+				}
 				console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
 				console.log('\n' + result.details + '\n');
 			}
