@@ -211,7 +211,8 @@ describe('headers', () => {
 			else {
 				if (!result.success) {
 					// dump(result);
-					console.log(result.details);
+					console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
+					console.log('\n' + result.details + '\n');
 				}
 				assert.isTrue(result.success, 'success');
 
@@ -238,7 +239,7 @@ describe('repos', () => {
 	});
 
 	files.sort();
-	files = files.slice(0, 100);
+	files = files.slice(200, 800);
 
 	files.forEach((file) => {
 		var targetPath = path.join(repoDir, file);
@@ -247,6 +248,7 @@ describe('repos', () => {
 			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
 			var result = DH.parse(sourceData);
 			if (!result.success) {
+				console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
 				console.log('\n' + result.details + '\n');
 			}
 			assert.isTrue(result.success);
