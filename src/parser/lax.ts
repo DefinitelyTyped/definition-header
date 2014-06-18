@@ -63,11 +63,9 @@ var separatorProject = P.seq(P.string(','), space)
 );
 
 export var person: P.Parser<model.Person> = P.seq(
-	nameUTF,
-	P.alt(
-		space.then(urlBracket),
-		P.succeed(null)
-	))
+		nameUTF,
+		space.then(urlBracket)
+	)
 	.map((arr) => {
 		return {
 			name: arr[0],
@@ -103,18 +101,6 @@ export var label: P.Parser<model.Label> = P.string('// Type definitions for ')
 		return {
 			name: label + (arr[1] ? ' (' + arr[1].join(', ') + ')' : ''),
 			version: semver
-		};
-	})
-	.skip(optTabSpace);
-
-export var labelX: P.Parser<model.Label> = P.string('// Type definitions for ')
-	.then(id)
-	.map((str: string) => {
-		regex.semverExtract.lastIndex = 0;
-		var extr = regex.semverExtract.exec(str);
-		return {
-			name: extr ? extr[1] : str,
-			version: extr && extr[2] ? extr[2] : null
 		};
 	})
 	.skip(optTabSpace);

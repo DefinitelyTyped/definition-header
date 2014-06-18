@@ -9,6 +9,6 @@
     authors:
       -
         name: "Marcin Najder"
-        url: null
+        url: "https://github.com/marcinnajder"
     repository:
       url:  "https://github.com/borisyankov/DefinitelyTyped"

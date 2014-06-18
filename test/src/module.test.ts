@@ -134,19 +134,6 @@ describe('partials', () => {
 	});
 
 	describe('person', () => {
-		assertPart(DH.parts.person, 'person-name-single', {
-			name: 'Jimmy',
-			url: null
-		});
-		assertPart(DH.parts.person, 'person-name-space', {
-			name: 'Jimmy Foo',
-			url: null
-		});
-		assertPart(DH.parts.person, 'person-name-special', {
-			name: 'Gia Bảo @ Sân Đình',
-			url: null
-		});
-
 		assertPart(DH.parts.person, 'person-url-single', {
 			name: 'Jimmy',
 			url: 'https://github.xyz/x/foo'
