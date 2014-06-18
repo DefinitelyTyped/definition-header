@@ -1,6 +1,6 @@
 # definition-header
 
-[![Build Status](https://secure.travis-ci.org/DefinitelyTyped/definition-header.svg?branch=master)](http://travis-ci.org/DefinitelyTyped/definition-header) [![NPM version](https://badge.fury.io/js/definition-header.png)](http://badge.fury.io/js/definition-header) [![Dependency Status](https://david-dm.org/DefinitelyTyped/definition-header.png)](https://david-dm.org/DefinitelyTyped/definition-header) [![devDependency Status](https://david-dm.org/DefinitelyTyped/definition-header/dev-status.png)](https://david-dm.org/DefinitelyTyped/definition-header#info=devDependencies)
+[![Build Status](https://secure.travis-ci.org/DefinitelyTyped/definition-header.svg?branch=master)](http://travis-ci.org/DefinitelyTyped/definition-header) [![NPM version](https://badge.fury.io/js/definition-header.svg)](http://badge.fury.io/js/definition-header) [![Dependency Status](https://david-dm.org/DefinitelyTyped/definition-header.svg)](https://david-dm.org/DefinitelyTyped/definition-header) [![devDependency Status](https://david-dm.org/DefinitelyTyped/definition-header/dev-status.svg)](https://david-dm.org/DefinitelyTyped/definition-header#info=devDependencies)
 
 > DefinitelyTyped definition header utils
 
