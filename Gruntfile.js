@@ -6,11 +6,10 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-ts-clean');
 	grunt.loadNpmTasks('grunt-tslint');
+	grunt.loadNpmTasks('grunt-dts-bundle');
 	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
-
-	grunt.loadTasks('./tasks');
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -92,12 +91,12 @@ module.exports = function (grunt) {
 				src: 'test/tmp/repo.test.js'
 			}
 		},
-		export_declaration: {
+		dts_bundle: {
 			index: {
 				options: {
+					name: 'definition-header',
 					main: 'dist/index.d.ts'
-				},
-				src: ['dist/**/*.d.ts']
+				}
 			}
 		},
 		pegjs: {
@@ -117,7 +116,7 @@ module.exports = function (grunt) {
 		'prep',
 		'ts:build',
 		'tslint:src',
-		'export_declaration:index'
+		'dts_bundle:index'
 	]);
 
 	grunt.registerTask('build', [
