@@ -1,6 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-/// <reference path="../../dist/index.d.ts" />
+/// <reference path="../../dist/definition-header.d.ts" />
 
 'use strict';
 

@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 		},
 		ts_clean: {
 			dist: {
-				src: ['dist/**/*', '!dist/index.d.ts'],
+				src: ['dist/**/*', '!dist/definition-header.d.ts'],
 				dot: true
 			}
 		},
@@ -95,7 +95,8 @@ module.exports = function (grunt) {
 			index: {
 				options: {
 					name: 'definition-header',
-					main: 'dist/index.d.ts'
+					main: 'dist/index.d.ts',
+					removeSource: true
 				}
 			}
 		},
