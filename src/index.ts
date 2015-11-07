@@ -12,10 +12,9 @@ import result = require('./parser/result');
 export import Result = result.ParseResult;
 
 export import model = require('./model');
-export import importer = require('./importers/index');
 export import utils = require('./utils');
 
-[model, importer, utils];
+[model, utils];
 
 export var parts = parseLax;
 
