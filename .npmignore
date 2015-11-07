@@ -1,40 +1,27 @@
 /.idea
-/assets
-/cache
-/cookbooks
-/deploy
-/docs
-/media
-/src
-/tasks
-/test
-/typings
-/tsd-cache
-/util
-/tool
-/repo
-/lib
-/scratch
 
-/tsd-config.json
-/tsd.json
-/tslint.json
-/Vagrantfile
-/Gruntfile.js
+test/
+typings/
+repo/
+
+tsd.json
+tslint.json
+Gruntfile.js
 
 .npmignore
 .gitignore
 .gitmodules
 
+# for https://github.com/Microsoft/TypeScript/issues/4667
+src/**/*.ts
+!src/**/*.d.ts
+
 .travis.yml
-.jshintrc
-.vagrant
 .editorconfig
 
-/tscommand*
-ignoreBaseDirFile.*
-.tscache
-tmp/
+.tscache/
+node_modules/
+npm-shrinkwrap.json
 
 /*.tgz
 /*.txt
