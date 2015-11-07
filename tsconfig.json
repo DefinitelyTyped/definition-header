@@ -1,0 +1,50 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": true,
+        "listFiles": true,
+        "noEmitOnError": true
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./**/*.d.ts",
+        "./typings/**/*.d.ts",
+        "!./repo/**/*.ts",
+        "!./node_modules/**/*",
+        "./node_modules/typescript/lib/lib.es6.d.ts"
+    ],
+    "exclude": [],
+    "files": [
+        "./src/assertion.ts",
+        "./src/const.ts",
+        "./src/index.ts",
+        "./src/model.ts",
+        "./src/parser/lax.ts",
+        "./src/parser/result.ts",
+        "./src/regex.ts",
+        "./src/schema.ts",
+        "./src/serialise.ts",
+        "./src/utils.ts",
+        "./test/src/module.test.ts",
+        "./test/src/repo.test.ts",
+        "./typings/chai/chai-assert.d.ts",
+        "./typings/glob/glob.d.ts",
+        "./typings/joi-assert/joi-assert.d.ts",
+        "./typings/joi/joi.d.ts",
+        "./typings/js-yaml/js-yaml.d.ts",
+        "./typings/minimatch/minimatch.d.ts",
+        "./typings/mkdirp/mkdirp.d.ts",
+        "./typings/mocha/mocha.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/parsimmon/parsimmon.d.ts",
+        "./typings/source-map-support/source-map-support.d.ts",
+        "./typings/tsd.d.ts",
+        "./typings/xregexp/xregexp.d.ts",
+        "./node_modules/typescript/lib/lib.es6.d.ts"
+    ]
+}

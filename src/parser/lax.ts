@@ -1,5 +1,3 @@
-/// <reference path="./../../typings/tsd.d.ts" />
-
 'use strict';
 
 import P = require('parsimmon');
@@ -111,7 +109,7 @@ export var project: P.Parser<model.Project[]> = P.string('// Project: ')
 		separatorProject.then(url).many()
 	))
 	.map((arr: any) => {
-		var ret = [];
+		var ret: any[] = [];
 		ret.push({
 			url: utils.untrail(arr[0])
 		});

@@ -1,7 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
-/// <reference path="../../dist/definition-header.d.ts" />
-
 'use strict';
 
 import fs = require('fs');
@@ -18,8 +14,7 @@ var assert = chai.assert;
 
 sms.install();
 
-import DefinitionHeader = require('definition-header');
-var DH: typeof DefinitionHeader = require('../../dist/index');
+import DH = require('../../src/');
 
 var testDir = path.resolve(__dirname, '..');
 var repoDir = path.join(testDir, '..', 'repo');

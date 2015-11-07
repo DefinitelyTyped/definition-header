@@ -6,7 +6,7 @@
 	"bundle": "./typings/tsd.d.ts",
 	"installed": {
 		"node/node.d.ts": {
-			"commit": "d8b512ed510dc47ff78fa3e0e64709088dd3b880"
+			"commit": "421d6610bdb09e1015b71f5991d7a68d079eca21"
 		},
 		"js-yaml/js-yaml.d.ts": {
 			"commit": "18eab81e38aa3514dfc9daf06b1faac5e0186560"
@@ -24,10 +24,10 @@
 			"commit": "efec83fc9487e36f716d8e2aa64c34397570e921"
 		},
 		"glob/glob.d.ts": {
-			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+			"commit": "421d6610bdb09e1015b71f5991d7a68d079eca21"
 		},
 		"minimatch/minimatch.d.ts": {
-			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"
+			"commit": "421d6610bdb09e1015b71f5991d7a68d079eca21"
 		},
 		"mocha/mocha.d.ts": {
 			"commit": "7ff25c8eeb8e4566b27a663550317143042f1660"

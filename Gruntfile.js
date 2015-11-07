@@ -6,22 +6,22 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-ts-clean');
 	grunt.loadNpmTasks('grunt-tslint');
-	grunt.loadNpmTasks('grunt-dts-bundle');
+	grunt.loadNpmTasks('grunt-tsconfig-update');
 	grunt.loadNpmTasks('grunt-mocha-test');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		jshint: {
-			options: grunt.util._.extend(grunt.file.readJSON('.jshintrc'), {
-				reporter: './node_modules/jshint-path-reporter'
-			}),
-			support: {
-				options: {
-					node: true
-				},
-				src: ['Gruntfile.js', 'tasks/**/*.*.js']
+		ts: {
+			default: {
+				tsconfig: {
+					tsconfig: "./tsconfig.json",
+					updateFiles:false
+				}
+			}
+		},
+		tsconfig: {
+			main: {
 			}
 		},
 		tslint: {
@@ -32,21 +32,14 @@ module.exports = function (grunt) {
 			src: ['src/**/*.ts'],
 			test: ['test/src/**/*.ts']
 		},
-		ts_clean: {
-			dist: {
-				src: ['dist/**/*', '!dist/definition-header.d.ts'],
-				dot: true
-			}
-		},
 		clean: {
+			ts: [
+				'src/**/*.js',
+				'src/**/*.js.map'
+			],
 			cruft: [
 				'tscommand-*.tmp.txt',
-				'dist/.baseDir*',
-				'test/tmp/.baseDir*',
 				'test/src/.baseDir*'
-			],
-			dist: [
-				'dist/**/*'
 			],
 			tmp: [
 				'tmp/**/*'
@@ -55,97 +48,48 @@ module.exports = function (grunt) {
 				'test/tmp/**/*'
 			]
 		},
-		ts: {
-			options: {
-				fast: 'never',
-				target: 'es5',
-				module: 'commonjs',
-				sourcemap: true,
-				declaration: true,
-				comments: true,
-				verbose: true
-			},
-			build: {
-				options: {
-					noImplicitAny: true
-				},
-				src: ['src/index.ts'],
-				outDir: 'dist/'
-			},
-			test: {
-				src: ['test/src/*.ts'],
-				outDir: 'test/tmp/'
-			}
-		},
 		mochaTest: {
 			options: {
 				reporter: 'mocha-unfunk-reporter'
 			},
 			all: {
-				src: 'test/tmp/*.test.js'
+				src: 'test/src/*.test.js'
 			},
 			module: {
-				src: 'test/tmp/module.test.js'
+				src: 'test/src/module.test.js'
 			},
 			repo: {
-				src: 'test/tmp/repo.test.js'
+				src: 'test/src/repo.test.js'
 			}
-		},
-		dts_bundle: {
-			index: {
-				options: {
-					name: 'definition-header',
-					main: 'dist/index.d.ts',
-					removeSource: true
-				}
-			}
-		},
-		pegjs: {
-
 		}
 	});
 
 	grunt.registerTask('prep', [
 		'clean:tmp',
-		'clean:dist',
 		'clean:test',
 		'clean:cruft',
-		'jshint:support'
+		'clean:ts'
 	]);
 
 	grunt.registerTask('compile', [
 		'prep',
-		'ts:build',
-		'tslint:src',
-		'dts_bundle:index'
+		'tsconfig',
+		'ts',
+		'tslint'
 	]);
 
 	grunt.registerTask('build', [
-		'compile',
-		'sweep'
+		'compile'
 	]);
 
 	grunt.registerTask('test', [
 		'build',
-		'ts:test',
-		'mochaTest:all',
-		'tslint:test',
-		'sweep'
+		'mochaTest:all'
 	]);
 
 	grunt.registerTask('prepublish', [
 		'build',
-		'ts:test',
-		'mochaTest:module',
-		'tslint:test',
-		'sweep',
-		'clean:tmp',
-		'clean:test'
-	]);
-
-	grunt.registerTask('sweep', [
-		'clean:cruft',
-		'ts_clean:dist'
+		'mochaTest:module'
 	]);
 
 	grunt.registerTask('dev', ['ts:typings']);

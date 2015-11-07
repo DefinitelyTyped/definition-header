@@ -1,7 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
-/// <reference path="../../dist/definition-header.d.ts" />
-
 'use strict';
 
 import fs = require('fs');
@@ -20,22 +16,21 @@ var assert = chai.assert;
 
 sms.install();
 
-import DefinitionHeader = require('definition-header');
-var DH: typeof DefinitionHeader = require('../../dist/index');
+import DH = require('../../src/');
 
 var testDir = path.resolve(__dirname, '..');
 var specDir = path.join(testDir, 'fixtures');
 var tmpDir = path.join(testDir, 'tmp');
 var repoDir = path.join(testDir, '..', 'repo');
 
-function readFields(targetPath) {
+function readFields(targetPath: string) {
 	var fieldsPath = path.join(path.dirname(targetPath), 'fields.yml');
 	return yaml.safeLoad(fs.readFileSync(fieldsPath, {encoding: 'utf8'}), {
 		filename: fieldsPath
 	});
 }
 
-function dump(v) {
+function dump(v: any) {
 	console.log(yaml.safeDump(v));
 }
 
