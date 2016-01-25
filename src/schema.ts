@@ -1,37 +1,37 @@
 'use strict';
 
-import Joi = require('joi');
+import * as Joi from 'joi';
 
-import model = require('./model');
-import regex = require('./regex');
+import * as model from './model';
+import * as regex from './regex';
 
-export var semver = Joi.string().regex(regex.semverC).description('semver');
-export var uri = Joi.string().regex(regex.uri).description('url');
+export let semver = Joi.string().regex(regex.semverC).description('semver');
+export let uri = Joi.string().regex(regex.uri).description('url');
 
-export var label = Joi.object({
+export let label = Joi.object({
 	name: Joi.string().regex(regex.nameUTF).required(),
 	version: Joi.string().allow(null).regex(regex.semverC).description('semver').optional()
 }).description('label');
 
-export var project = Joi.object({
+export let project = Joi.object({
 	url: Joi.string().regex(regex.uri).required()
 }).description('project');
 
-export var person = Joi.object({
+export let person = Joi.object({
 	name: Joi.string().regex(regex.nameUTF).required(),
 	url: Joi.string().allow(null).regex(regex.uri).optional().default(null)
 }).description('person');
 
-export var repository = Joi.object({
+export let repository = Joi.object({
 	// use default?
 	url: Joi.string().regex(regex.uri).required()
 }).description('repository');
 
-export var header = Joi.object({
+export let header = Joi.object({
 	label: label.required(),
-	project: Joi.array().min(1).includes(project).required(),
+	project: Joi.array().min(1).items(project).required(),
 	repository: repository.required(),
-	authors: Joi.array().min(1).includes(person).required()
+	authors: Joi.array().min(1).items(person).required()
 }).description('definition-header').options({
 	allowUnknown: true,
 	stripUnknown: true,

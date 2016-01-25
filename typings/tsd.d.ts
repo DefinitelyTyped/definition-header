@@ -9,4 +9,4 @@
 /// <reference path="glob/glob.d.ts" />
 /// <reference path="minimatch/minimatch.d.ts" />
 /// <reference path="mocha/mocha.d.ts" />
-/// <reference path="chai/chai-assert.d.ts" />
+/// <reference path="chai/chai.d.ts" />

@@ -32,7 +32,7 @@
         "./src/utils.ts",
         "./test/src/module.test.ts",
         "./test/src/repo.test.ts",
-        "./typings/chai/chai-assert.d.ts",
+        "./typings/chai/chai.d.ts",
         "./typings/glob/glob.d.ts",
         "./typings/joi-assert/joi-assert.d.ts",
         "./typings/joi/joi.d.ts",

@@ -1,6 +1,6 @@
 'use strict';
 
-import model = require('../model');
+import * as model from '../model';
 
 export interface ParseResult {
 	success: boolean;

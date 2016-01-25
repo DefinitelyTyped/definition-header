@@ -1,20 +1,21 @@
 'use strict';
 
-import assertion = require('./assertion');
-import serialise = require('./serialise');
-import regex = require('./regex');
+import * as assertion from './assertion';
+import * as serialise from './serialise';
+import * as regex from './regex';
 
-import parseLax = require('./parser/lax');
+import * as parseLax from './parser/lax';
 
-import result = require('./parser/result');
-export import Result = result.ParseResult;
+import {ParseResult as Result} from './parser/result';
 
-export import model = require('./model');
-export import utils = require('./utils');
+import * as model from './model';
+import * as utils from './utils';
+export {
+    model,
+    utils,
+};
 
-[model, utils];
-
-export var parts = parseLax;
+export let parts = parseLax;
 
 export function isPartial(source: string): boolean {
 	return regex.partial.test(source);
@@ -25,8 +26,8 @@ export function parse(source: string): Result {
 		source = source.replace(regex.bomStart, '');
 	}
 
-	var result = parseLax.header.parse(source);
-	var ret: Result = {
+	let result = parseLax.header.parse(source);
+	let ret: Result = {
 		success: !!result.status
 	};
 	if (result.status) {
@@ -35,13 +36,13 @@ export function parse(source: string): Result {
 	}
 	ret.index = result.index;
 
-	var pos = utils.getPosition(source, result.index);
+	let pos = utils.getPosition(source, result.index);
 	ret.line = pos.line;
 	ret.column = pos.column;
 
-	ret.message = 'expected ' + result.expected.replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
+	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
 
-	var details = '';
+	let details = '';
 
 	details += ret.message + ':';
 	details += '\n\n';

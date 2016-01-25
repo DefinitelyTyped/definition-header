@@ -1,30 +1,30 @@
 'use strict';
 
-import fs = require('fs');
-import path = require('path');
-import util = require('util');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as util from 'util';
 
-import P = require('parsimmon');
-import glob = require('glob');
-import yaml = require('js-yaml');
-import sms = require('source-map-support');
-import mkdirp = require('mkdirp');
+import * as P from 'parsimmon';
+import * as glob from 'glob';
+import * as yaml from 'js-yaml';
+import * as sms from 'source-map-support';
+import * as mkdirp from 'mkdirp';
 
-import chai = require('chai');
+import * as chai from 'chai';
 
-var assert = chai.assert;
+let assert = chai.assert;
 
 sms.install();
 
-import DH = require('../../src/');
+import * as DH from '../../src/';
 
-var testDir = path.resolve(__dirname, '..');
-var specDir = path.join(testDir, 'fixtures');
-var tmpDir = path.join(testDir, 'tmp');
-var repoDir = path.join(testDir, '..', 'repo');
+let testDir = path.resolve(__dirname, '..');
+let specDir = path.join(testDir, 'fixtures');
+let tmpDir = path.join(testDir, 'tmp');
+let repoDir = path.join(testDir, '..', 'repo');
 
 function readFields(targetPath: string) {
-	var fieldsPath = path.join(path.dirname(targetPath), 'fields.yml');
+	let fieldsPath = path.join(path.dirname(targetPath), 'fields.yml');
 	return yaml.safeLoad(fs.readFileSync(fieldsPath, {encoding: 'utf8'}), {
 		filename: fieldsPath
 	});
@@ -36,9 +36,9 @@ function dump(v: any) {
 
 function assertPart<T>(parser: any, name: string, value: any) {
 	it(name, () => {
-		var sourceData = fs.readFileSync(path.join(specDir, 'partials', name, 'header.txt'), {encoding: 'utf8'});
-		var actual = parser.skip(P.all).parse(sourceData);
-		var expected = {
+		let sourceData = fs.readFileSync(path.join(specDir, 'partials', name, 'header.txt'), {encoding: 'utf8'});
+		let actual = parser.skip(P.all).parse(sourceData);
+		let expected = {
 			status: true,
 			value: value
 		};
@@ -62,14 +62,14 @@ describe('utils', () => {
 		});
 	});
 	describe('find correct position', () => {
-		var str = [
+		let str = [
 			'a',
 			'b',
 			'c',
 			'd'
 		].join('\n');
 
-		var tests = [
+		let tests = [
 			[0, {line: 0, column: 0}],
 			[1, {line: 0, column: 1}],
 			[2, {line: 1, column: 0}],
@@ -181,23 +181,23 @@ describe('partials', () => {
 
 describe('headers', () => {
 
-	var files = glob.sync('headers/*/header.txt', {
+	let files = glob.sync('headers/*/header.txt', {
 		cwd: specDir
 	});
 
 	files.sort();
 	files.forEach((file) => {
-		var targetPath = path.join(specDir, file);
-		var testName = path.basename(path.dirname(file));
+		let targetPath = path.join(specDir, file);
+		let testName = path.basename(path.dirname(file));
 
 		it(testName, () => {
-			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
-			var fields = readFields(targetPath);
+			let sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
+			let fields = readFields(targetPath);
 
 			// dump(sourceData);
 			// dump(fields);
 
-			var result = DH.parse(sourceData);
+			let result = DH.parse(sourceData);
 			if (fields.valid === false) {
 				assert.isFalse(result.success, 'success');
 			}
@@ -208,10 +208,10 @@ describe('headers', () => {
 				}
 				assert.isTrue(result.success, 'success');
 
-				var dumpDir = path.join(tmpDir, testName);
+				let dumpDir = path.join(tmpDir, testName);
 				mkdirp.sync(dumpDir);
 
-				/*var serialised = DH.stringify(result.value).join('\n') + '\n';
+				/*let serialised = DH.stringify(result.value).join('\n') + '\n';
 				fs.writeFileSync(path.join(dumpDir, 'fields.yml'), yaml.safeDump(serialised), {indent: 2});
 				fs.writeFileSync(path.join(dumpDir, 'header.txt'), serialised);*/
 
