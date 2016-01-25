@@ -1,5 +1,5 @@
 module cnst {
-	export var REPOSITORY = 'https://github.com/borisyankov/DefinitelyTyped';
+	export let REPOSITORY = 'https://github.com/DefinitelyTyped/DefinitelyTyped';
 }
 Object.freeze(cnst);
 export = cnst;

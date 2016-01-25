@@ -1,19 +1,19 @@
 'use strict';
 
-import Joi = require('joi');
-import joiAssert = require('joi-assert');
+import * as Joi from 'joi';
+import * as joiAssert from 'joi-assert';
 
-import model = require('./model');
-import schema = require('./schema');
-import regex = require('./regex');
+import * as model from './model';
+import * as schema from './schema';
+import * as regex from './regex';
 
-export var ok = joiAssert.bake(Joi.any());
-export var number = joiAssert.bake(Joi.number());
-export var string = joiAssert.bake(Joi.string());
-export var object = joiAssert.bake(Joi.object());
-export var array = joiAssert.bake(Joi.array());
-export var uri = joiAssert.bake(schema.uri);
-export var semver = joiAssert.bake(schema.semver);
+export let ok = joiAssert.bake(Joi.any());
+export let number = joiAssert.bake(Joi.number());
+export let string = joiAssert.bake(Joi.string());
+export let object = joiAssert.bake(Joi.object());
+export let array = joiAssert.bake(Joi.array());
+export let uri = joiAssert.bake(schema.uri);
+export let semver = joiAssert.bake(schema.semver);
 
 export function label(obj: any, message?: string): model.Label {
 	return joiAssert(obj, schema.label, message);

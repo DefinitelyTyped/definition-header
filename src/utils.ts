@@ -1,6 +1,6 @@
 'use strict';
 
-var lineExp = /\r?\n/g;
+let lineExp = /\r?\n/g;
 
 export interface Position {
 	column: number;
@@ -8,12 +8,12 @@ export interface Position {
 }
 
 export function getPosition(stream: string, index: number): Position {
-	var position: Position = {
+	let position: Position = {
 		column: 0,
 		line: 0
 	};
-	var match: RegExpExecArray;
-	var nextLineStart = 0;
+	let match: RegExpExecArray;
+	let nextLineStart = 0;
 	lineExp.lastIndex = 0;
 
 	index = Math.min(index, stream.length - 1);
@@ -32,7 +32,7 @@ export function getPosition(stream: string, index: number): Position {
 
 export function getLinesAt(stream: string, start: number, end: number = 0): string[] {
 	// TODO improve line grabber (remove horrible split for top-down line parser)
-	var arr = stream.split(lineExp);
+	let arr = stream.split(lineExp);
 	start = Math.max(start, 0);
 	if (!end) {
 		end = arr.length - 1;
@@ -51,11 +51,11 @@ export function untrail(str: string): string {
 	return str.replace(/\/$/, '');
 }
 
-var longString = '----------------------------------------';
+let longString = '----------------------------------------';
 
 export function charPointer(column: number): string {
 	if (longString.length < column) {
-		for (var i = longString.length; i < column; i++) {
+		for (let i = longString.length; i < column; i++) {
 			longString += '-';
 		}
 	}
@@ -64,7 +64,7 @@ export function charPointer(column: number): string {
 
 // TODO harden for deeper lines
 export function highlightPos(stream: string, line: number, column?: number): string {
-	var lines = getLinesAt(stream, 0, line + 2);
+	let lines = getLinesAt(stream, 0, line + 2);
 	if (typeof column === 'number') {
 		lines.splice(line + 1, 0, charPointer(column));
 	}

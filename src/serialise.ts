@@ -1,12 +1,12 @@
 'use strict';
 
-import model = require('./model');
-import assertion = require('./assertion');
+import * as model from './model';
+import * as assertion from './assertion';
 
 export function stringify(header: model.Header): string[] {
 	assertion.header(header);
 
-	var ret: string[] = [];
+	let ret: string[] = [];
 	ret.push('// Type definitions for ' + header.label.name + (header.label.version ? ' v' + header.label.version : ''));
 	ret.push('// Project: ' + header.project.map((project: model.Project) => {
 		return project.url ;

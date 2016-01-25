@@ -1,36 +1,35 @@
 'use strict';
 
-import P = require('parsimmon');
+import * as P from 'parsimmon';
 
-import model = require('../model');
-import regex = require('../regex');
-import utils = require('../utils');
+import * as model from '../model';
+import * as regex from '../regex';
+import * as utils from '../utils';
 
+let id = P.regex(regex.label).desc('project name');
+let semver = P.regex(regex.semverV).desc('semver');
+let space = P.string(' ');
+let colon = P.string(':');
+let optColon = P.regex(/:?/);
+let linebreak = P.regex(/\r?\n/).desc('linebreak');
+let lineTrail = P.regex(/[ \t]*\r?\n/).desc('linebreak');
+let tabSpace = P.regex(/[ \t]/).desc('tab or space');
+let optTabSpace = P.regex(/[ \t]*/).desc('tab or space');
+let optComma = P.regex(/,?/);
 
-var id = P.regex(regex.label).desc('project name');
-var semver = P.regex(regex.semverV).desc('semver');
-var space = P.string(' ');
-var colon = P.string(':');
-var optColon = P.regex(/:?/);
-var linebreak = P.regex(/\r?\n/).desc('linebreak');
-var lineTrail = P.regex(/[ \t]*\r?\n/).desc('linebreak');
-var tabSpace = P.regex(/[ \t]/).desc('tab or space');
-var optTabSpace = P.regex(/[ \t]*/).desc('tab or space');
-var optComma = P.regex(/,?/);
+let url = P.regex(regex.uri).desc('url');
+let urlBracket = P.string('<').then(url).skip(P.string('>'));
 
-var url = P.regex(regex.uri).desc('url');
-var urlBracket = P.string('<').then(url).skip(P.string('>'));
+let bomOpt = P.regex(regex.bomOpt);
 
-var bomOpt = P.regex(regex.bomOpt);
+let comment = P.string('//');
+let commentSpace = comment.skip(space);
+let commentTab = comment.skip(tabSpace);
+let comment3 = P.string('///').skip(space);
 
-var comment = P.string('//');
-var commentSpace = comment.skip(space);
-var commentTab = comment.skip(tabSpace);
-var comment3 = P.string('///').skip(space);
+let nameUTF = P.regex(regex.nameUTF).desc('name');
 
-var nameUTF = P.regex(regex.nameUTF).desc('name');
-
-var separatorComma = P.string(',')
+let separatorComma = P.string(',')
 	.then(space.or(optTabSpace
 		.then(linebreak)
 		.then(comment)
@@ -39,7 +38,7 @@ var separatorComma = P.string(',')
 	)
 );
 
-var separatorOptComma = P.seq(P.string(','), space)
+let separatorOptComma = P.seq(P.string(','), space)
 	.or(optTabSpace
 		.then(optComma)
 		.then(linebreak)
@@ -48,7 +47,7 @@ var separatorOptComma = P.seq(P.string(','), space)
 		.then(optTabSpace)
 );
 
-var separatorProject = P.seq(P.string(','), space)
+let separatorProject = P.seq(P.string(','), space)
 	.or(optTabSpace
 		.then(optComma)
 		.then(linebreak)
@@ -60,7 +59,7 @@ var separatorProject = P.seq(P.string(','), space)
 		).or(optTabSpace))
 );
 
-export var person: P.Parser<model.Person> = P.seq(
+export let person: P.Parser<model.Person> = P.seq(
 		nameUTF,
 		space.then(urlBracket)
 	)
@@ -72,7 +71,7 @@ export var person: P.Parser<model.Person> = P.seq(
 	})
 	.skip(optTabSpace);
 
-export var label: P.Parser<model.Label> = P.string('// Type definitions for ')
+export let label: P.Parser<model.Label> = P.string('// Type definitions for ')
 	.then(P.seq(
 		id,
 		space.then(
@@ -89,9 +88,9 @@ export var label: P.Parser<model.Label> = P.string('// Type definitions for ')
 	))
 	.map((arr: any[]) => {
 		regex.semverExtract.lastIndex = 0;
-		var match = regex.semverExtract.exec(arr[0]);
-		var semver: string = null;
-		var label: string = arr[0];
+		let match = regex.semverExtract.exec(arr[0]);
+		let semver: string = null;
+		let label: string = arr[0];
 		if (match) {
 			label = match[1];
 			semver = match[2];
@@ -103,13 +102,13 @@ export var label: P.Parser<model.Label> = P.string('// Type definitions for ')
 	})
 	.skip(optTabSpace);
 
-export var project: P.Parser<model.Project[]> = P.string('// Project: ')
+export let project: P.Parser<model.Project[]> = P.string('// Project: ')
 	.then(P.seq(
 		url,
 		separatorProject.then(url).many()
 	))
 	.map((arr: any) => {
-		var ret: any[] = [];
+		let ret: any[] = [];
 		ret.push({
 			url: utils.untrail(arr[0])
 		});
@@ -122,19 +121,19 @@ export var project: P.Parser<model.Project[]> = P.string('// Project: ')
 	})
 	.skip(optTabSpace);
 
-export var authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
+export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
 	.then(P.seq(
 		person,
 		separatorComma.then(person).many()
 	))
 	.map((arr) => {
-		var ret = <model.Author[]> arr[1];
+		let ret = <model.Author[]> arr[1];
 		ret.unshift(<model.Author> arr[0]);
 		return ret;
 	})
 	.skip(optTabSpace);
 
-export var repo: P.Parser<model.Repository> = P.string('// Definitions: ')
+export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
 	.then(url)
 	.map((url) => {
 		return {
@@ -143,7 +142,7 @@ export var repo: P.Parser<model.Repository> = P.string('// Definitions: ')
 	})
 	.skip(optTabSpace);
 
-export var header: P.Parser<model.Header> = bomOpt
+export let header: P.Parser<model.Header> = bomOpt
 	.then(P.seq(
 		label.skip(linebreak),
 		project.skip(linebreak),

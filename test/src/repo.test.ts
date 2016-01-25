@@ -1,41 +1,41 @@
 'use strict';
 
-import fs = require('fs');
-import path = require('path');
-import util = require('util');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as util from 'util';
 
-import P = require('parsimmon');
-import glob = require('glob');
-import sms = require('source-map-support');
+import * as P from 'parsimmon';
+import * as glob from 'glob';
+import * as sms from 'source-map-support';
 
-import chai = require('chai');
+import * as chai from 'chai';
 
-var assert = chai.assert;
+let assert = chai.assert;
 
 sms.install();
 
-import DH = require('../../src/');
+import * as DH from '../../src/';
 
-var testDir = path.resolve(__dirname, '..');
-var repoDir = path.join(testDir, '..', 'repo');
+let testDir = path.resolve(__dirname, '..');
+let repoDir = path.join(testDir, '..', 'repo');
 
 describe('full repo', () => {
 	if (!fs.existsSync(repoDir)) {
 		return;
 	}
 
-	var files = glob.sync('*/*.d.ts', {
+	let files = glob.sync('*/*.d.ts', {
 		cwd: repoDir
 	});
 
 	files.sort();
 
 	files.forEach((file) => {
-		var targetPath = path.join(repoDir, file);
+		let targetPath = path.join(repoDir, file);
 
 		it(file, () => {
-			var sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
-			var result = DH.parse(sourceData);
+			let sourceData = fs.readFileSync(targetPath, {encoding: 'utf8'});
+			let result = DH.parse(sourceData);
 			if (!result.success) {
 				if (DH.isPartial(sourceData)) {
 					return;
