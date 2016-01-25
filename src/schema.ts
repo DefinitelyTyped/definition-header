@@ -29,9 +29,9 @@ export var repository = Joi.object({
 
 export var header = Joi.object({
 	label: label.required(),
-	project: Joi.array().min(1).includes(project).required(),
+	project: Joi.array().min(1).items(project).required(),
 	repository: repository.required(),
-	authors: Joi.array().min(1).includes(person).required()
+	authors: Joi.array().min(1).items(person).required()
 }).description('definition-header').options({
 	allowUnknown: true,
 	stripUnknown: true,

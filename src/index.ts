@@ -39,7 +39,7 @@ export function parse(source: string): Result {
 	ret.line = pos.line;
 	ret.column = pos.column;
 
-	ret.message = 'expected ' + result.expected.replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
+	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
 
 	var details = '';
 
