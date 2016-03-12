@@ -1,6 +1,6 @@
 'use strict';
 
-import {XRegExp} from 'xregexp';
+import * as XRegExp from 'xregexp';
 
 /* tslint:disable:max-line-length:*/
 

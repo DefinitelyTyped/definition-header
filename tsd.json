@@ -1,42 +1,42 @@
 {
 	"version": "v4",
 	"path": "./typings",
-	"repo": "borisyankov/DefinitelyTyped",
+	"repo": "DefinitelyTyped/DefinitelyTyped",
 	"ref": "master",
 	"bundle": "./typings/tsd.d.ts",
 	"installed": {
 		"node/node.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"js-yaml/js-yaml.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"source-map-support/source-map-support.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"parsimmon/parsimmon.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"xregexp/xregexp.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"mkdirp/mkdirp.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"glob/glob.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"minimatch/minimatch.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"mocha/mocha.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"chai/chai.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		},
 		"joi/joi.d.ts": {
-			"commit": "5e269cec94f666c298625948c5c5ff8224846e33"
+			"commit": "0d622d857f97d44ea7dcad2b3edec1f23c48fe9e"
 		}
 	}
 }
