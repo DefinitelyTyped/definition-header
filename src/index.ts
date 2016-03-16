@@ -13,6 +13,7 @@ import * as utils from './utils';
 export {
     model,
     utils,
+    Result,
 };
 
 export let parts = parseLax;
