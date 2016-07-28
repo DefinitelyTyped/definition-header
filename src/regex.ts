@@ -15,7 +15,7 @@ export let labelY = /[a-z](?:(?:[ _\.-]| [\/@-] )?\(?[a-z0-9]+(?:, [a-z0-9]+)\)?
 
 export let labelZ = /[a-z0-9]*(?:[ _\.-]?[a-z0-9]*)*/i;
 
-export let label = /[a-z](?:(?:[ _\.'-]| [\/@-] )?[a-z0-9]+:?)*\+?/i;
+export let label = /[a-z0-9](?:(?:[ _\.'-]| [\/@-] )?[a-z0-9]+:?)*\+?/i;
 
 export let semverC = /\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?/;
 export let semverV = /v?(\d+(?:\.\d+)+(?:-[a-z_]\w*(?:\.\d+)*)?)\+?/;
