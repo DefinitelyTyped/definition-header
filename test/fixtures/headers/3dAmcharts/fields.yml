@@ -1,11 +1,11 @@
 ---
   parsed:
     label:
-      name: "amCharts"
+      name: "3dAmCharts"
       version: null
     project:
       -
-       url:  "http://www.amcharts.com"
+       url:  "http://www.3damcharts.com"
     authors:
       -
         name: "aleksey-bykov"
