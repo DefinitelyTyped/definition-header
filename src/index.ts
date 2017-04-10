@@ -31,23 +31,22 @@ export function parse(source: string): Result {
 	let ret: Result = {
 		success: !!result.status
 	};
-	if (result.status) {
+	if (result.status === true) {
 		ret.value = result.value;
 		return ret;
 	}
-	ret.index = result.index;
+	ret.index = result.index.offset;
 
-	let pos = utils.getPosition(source, result.index);
-	ret.line = pos.line;
-	ret.column = pos.column;
+	ret.line = result.index.line;
+	ret.column = result.index.column;
 
-	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + (pos.line + 1) + ', column ' + (pos.column + 1);
+	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + (ret.line + 1) + ', column ' + (ret.column + 1);
 
 	let details = '';
 
 	details += ret.message + ':';
 	details += '\n\n';
-	details += utils.highlightPos(source, pos.line, pos.column);
+	details += utils.highlightPos(source, ret.line, ret.column);
 	details += '\n';
 
 	ret.details = details;

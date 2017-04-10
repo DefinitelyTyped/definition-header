@@ -2,34 +2,6 @@
 
 let lineExp = /\r?\n/g;
 
-export interface Position {
-	column: number;
-	line: number;
-}
-
-export function getPosition(stream: string, index: number): Position {
-	let position: Position = {
-		column: 0,
-		line: 0
-	};
-	let match: RegExpExecArray;
-	let nextLineStart = 0;
-	lineExp.lastIndex = 0;
-
-	index = Math.min(index, stream.length - 1);
-
-	while ((match = lineExp.exec(stream))) {
-		if (lineExp.lastIndex > index) {
-			position.column = index - nextLineStart;
-			return position;
-		}
-		position.line += 1;
-		nextLineStart = lineExp.lastIndex;
-	}
-	position.column = index - nextLineStart;
-	return position;
-}
-
 export function getLinesAt(stream: string, start: number, end: number = 0): string[] {
 	// TODO improve line grabber (remove horrible split for top-down line parser)
 	let arr = stream.split(lineExp);

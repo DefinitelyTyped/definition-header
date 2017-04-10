@@ -39,16 +39,23 @@
     "xregexp": "^3.1.1"
   },
   "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/glob": "^5.0.30",
+    "@types/joi": "^10.0.1",
+    "@types/js-yaml": "^3.5.29",
+    "@types/minimatch": "^2.0.29",
+    "@types/mkdirp": "^0.3.29",
+    "@types/mocha": "^2.2.40",
+    "@types/node": "^7.0.12",
+    "@types/parsimmon": "^1.0.4",
+    "@types/xregexp": "^3.0.28",
     "chai": "^3.5.0",
     "detect-indent": "^5.0.0",
     "glob": "^7.1.1",
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-copy": "^1.0.0",
+    "grunt-exec": "^2.0.0",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-ts": "^5.3.2",
-    "grunt-ts-clean": "^0.2.0",
-    "grunt-tsconfig-update": "^0.0.1",
     "grunt-tslint": "^5.0.1",
     "js-yaml": "^3.8.3",
     "mkdirp": "^0.5.1",
@@ -56,7 +63,6 @@
     "mocha-unfunk-reporter": "^0.4.0",
     "source-map-support": "^0.4.14",
     "tslint": "^5.0.0",
-    "tslint-path-formatter": "^0.1.0",
     "typescript": "^2.2.2"
   }
 }

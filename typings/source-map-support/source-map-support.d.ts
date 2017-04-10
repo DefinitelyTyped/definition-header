@@ -3,8 +3,6 @@
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../node/node.d.ts" />
-
 declare module 'source-map-support' {
 	/**
 	 * Output of retrieveSourceMap().

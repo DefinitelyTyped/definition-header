@@ -3,8 +3,6 @@
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../joi/joi.d.ts" />
-
 declare module 'joi-assert' {
 	import Joi = require('joi');
 

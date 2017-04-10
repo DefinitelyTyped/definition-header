@@ -61,31 +61,6 @@ describe('utils', () => {
 			assert.isFalse(DH.isPartial('// DefinitelyTyped: not-partial '));
 		});
 	});
-	describe('find correct position', () => {
-		let str = [
-			'a',
-			'b',
-			'c',
-			'd'
-		].join('\n');
-
-		let tests = [
-			[0, {line: 0, column: 0}],
-			[1, {line: 0, column: 1}],
-			[2, {line: 1, column: 0}],
-			[3, {line: 1, column: 1}],
-			[4, {line: 2, column: 0}],
-			[5, {line: 2, column: 1}],
-			[6, {line: 3, column: 0}],
-			[7, {line: 3, column: 0}],
-			[8, {line: 3, column: 0}],
-		];
-		tests.forEach((test: any, i: number) => {
-			it('test #' + i, () => {
-				assert.deepEqual(DH.utils.getPosition(str, test[0]), test[1]);
-			});
-		});
-	});
 });
 
 describe('partials', () => {
