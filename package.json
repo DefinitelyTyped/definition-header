@@ -35,7 +35,7 @@
   "dependencies": {
     "joi": "^10.4.1",
     "joi-assert": "^0.0.3",
-    "parsimmon": "jneen/parsimmon#365a5e3ff9b3a80638b2b1ecf8b4201abccc9815",
+    "parsimmon": "^1.3.0",
     "xregexp": "^3.1.1"
   },
   "devDependencies": {
