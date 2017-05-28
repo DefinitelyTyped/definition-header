@@ -47,9 +47,6 @@
         name: Andrew Gaspar
         url: "https://github.com/AndrewGaspar"
       -
-        name: James Harrison Fisher
-        url: "https://github.com/jameshfisher"
-      -
         name: Seikichi Kondo
         url: "https://github.com/seikichi"
       -
@@ -64,5 +61,14 @@
       -
         name: John Reilly
         url: "https://github.com/johnnyreilly"
+      -
+        name: Dick van den Brink
+        url: "https://github.com/DickvdBrink"
+      -
+        name: Thomas Schulz
+        url: "https://github.com/King2500"
+      -
+        name: Leonard Thieu
+        url: "https://github.com/leonard-thieu"
     repository:
-      url: "https://github.com/borisyankov/DefinitelyTyped"
+      url: "https://github.com/DefinitelyTyped/DefinitelyTyped"

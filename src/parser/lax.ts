@@ -122,10 +122,15 @@ export let project: P.Parser<model.Project[]> = P.string('// Project: ')
 	.skip(optTabSpace);
 
 export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
-	.then(P.seq(
-		person,
-		separatorComma.then(person).many()
-	))
+	.then(P.alt(
+		P.seq(
+			person.notFollowedBy(separatorComma),
+			linebreak.skip(P.string('//                 ')).then(person).many()
+		),
+		P.seq(
+			person,
+			separatorComma.then(person).many()
+		)))
 	.map((arr) => {
 		let ret = <model.Author[]> arr[1];
 		ret.unshift(<model.Author> arr[0]);
