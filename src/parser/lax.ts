@@ -59,13 +59,16 @@ let separatorProject = P.seq(P.string(','), space)
 		).or(optTabSpace))
 );
 
-export let person: P.Parser<model.Person> = P.seq(
-		nameUTF,
-		space.then(urlBracket)
+export let person: P.Parser<model.Person> = P
+	.seq(
+		// name: Grab everything up to the URL bracket
+		P.takeWhile(c => c !== '<').skip(P.string('<')),
+		// url: Grab everything between the URL brackets
+		P.takeWhile(c => c !== '>').skip(P.string('>'))
 	)
 	.map((arr) => {
 		return {
-			name: arr[0],
+			name: arr[0].trim(),
 			url: arr[1] ? utils.untrail(arr[1]) : null
 		};
 	})
