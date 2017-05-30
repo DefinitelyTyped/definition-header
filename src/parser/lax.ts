@@ -132,22 +132,29 @@ export let project: P.Parser<model.Project[]> = P.string('// Project: ')
 	})
 	.skip(optTabSpace);
 
+let multilineAuthorsSeparator = P.seq(
+	// Line can end with optional comma followed by any number of spaces and tabs
+	optComma, optTabSpace,
+	// Check if there's more authors
+	linebreak.notFollowedBy(P.string('// Definitions: ')),
+	// Grab the beginning of the line up to the start of the next author
+	comment, optTabSpace
+).map(result => result.join(''));
+// Authors can be separated on the same line by a comma followed by any number of spaces and tabs
+let sameLineAuthorsSeparator = P.seq(
+	P.string(','), optTabSpace
+).map(result => result.join(''));
+
 export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
-	.then(P.alt(
-		P.seq(
-			person.notFollowedBy(separatorComma),
-			linebreak.skip(P.string('//                 ')).then(person).many()
-		),
-		P.seq(
-			person,
-			separatorComma.then(person).many()
-		)))
-	.map((arr) => {
-		let ret = <model.Author[]> arr[1];
-		ret.unshift(<model.Author> arr[0]);
-		return ret;
-	})
-	.skip(optTabSpace);
+    .then(P.sepBy(
+		person,
+		P.alt(
+			// Multi-line must go first or else same-line will eat its optional comma
+			multilineAuthorsSeparator,
+			sameLineAuthorsSeparator
+		)
+	))
+    .skip(optTabSpace);
 
 export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
 	.then(url)
