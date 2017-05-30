@@ -157,10 +157,13 @@ export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
     .skip(optTabSpace);
 
 export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
-	.then(url)
-	.map((url) => {
+    .then(P.takeWhile(c => {
+		return c !== '\r' &&
+			c !== '\n';
+	}))
+    .map((url) => {
 		return {
-			url: utils.untrail(url)
+			url: utils.untrail(url.replace(/\s/, ''))
 		};
 	})
 	.skip(optTabSpace);
