@@ -24,7 +24,7 @@ describe('full repo', () => {
 		return;
 	}
 
-	let files = glob.sync('*/*.d.ts', {
+	let files = glob.sync('types/*/index.d.ts', {
 		cwd: repoDir
 	});
 
