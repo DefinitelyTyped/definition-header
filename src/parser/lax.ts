@@ -59,6 +59,11 @@ let separatorProject = P.seq(P.string(','), space)
 		).or(optTabSpace))
 );
 
+let untilEndOfLine = P.takeWhile(c => {
+	return c !== '\r' &&
+		c !== '\n';
+});
+
 export let person: P.Parser<model.Person> = P
 	.seq(
 		// name: Grab everything up to the URL bracket
@@ -78,10 +83,7 @@ export let label: P.Parser<model.Label> = P
 	// Starts with '// Type definitions for '
 	.string('// Type definitions for ')
 	// Grab the rest of the line
-    .then(P.takeWhile((c) => {
-		return c !== '\r' &&
-			c !== '\n';
-	}))
+    .then(untilEndOfLine)
 	.map((result) => {
 		// Label is everything that is not the version number
 		// Version number is separated from the label by a space
@@ -130,7 +132,7 @@ export let project: P.Parser<model.Project[]> = P.string('// Project: ')
 		});
 		return ret;
 	})
-	.skip(optTabSpace);
+	.skip(untilEndOfLine);
 
 let multilineAuthorsSeparator = P.seq(
 	// Line can end with optional comma followed by any number of spaces and tabs
@@ -157,10 +159,7 @@ export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
     .skip(optTabSpace);
 
 export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
-    .then(P.takeWhile(c => {
-		return c !== '\r' &&
-			c !== '\n';
-	}))
+    .then(untilEndOfLine)
     .map((url) => {
 		return {
 			url: utils.untrail(url.replace(/\s/, ''))
