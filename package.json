@@ -1,6 +1,6 @@
 {
   "name": "definition-header",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "DefinitelyTyped definition header tools",
   "keywords": [
     "typescript",
