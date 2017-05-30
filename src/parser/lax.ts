@@ -71,32 +71,40 @@ export let person: P.Parser<model.Person> = P.seq(
 	})
 	.skip(optTabSpace);
 
-export let label: P.Parser<model.Label> = P.string('// Type definitions for ')
-	.then(P.seq(
-		id,
-		space.then(
-			P.string('(')
-				.then(P.seq(
-					id,
-					P.string(', ').then(id).many()
-				).map((arr: any[]) => {
-					return [arr[0]].concat(arr[1]);
-				}))
-				.skip(P.string(')'))
-		)
-		.or(P.succeed(null))
-	))
-	.map((arr: any[]) => {
-		regex.semverExtract.lastIndex = 0;
-		let match = regex.semverExtract.exec(arr[0]);
+export let label: P.Parser<model.Label> = P
+	// Starts with '// Type definitions for '
+	.string('// Type definitions for ')
+	// Grab the rest of the line
+    .then(P.takeWhile((c) => {
+		return c !== '\r' &&
+			c !== '\n';
+	}))
+	.map((result) => {
+		// Label is everything that is not the version number
+		// Version number is separated from the label by a space
+		// - Expected format is MAJOR.MINOR but authors might deviate from it
+		// - Can be omitted
+		// - Can have leading 'v'
+		// - Can have trailing 'x'
+		// - Can have trailing '+'
+		// - Can be in the middle of the label
+		// - Can indicate multiple versions (e.g. '1.10.x / 2.0.x')
+		let match = /(.*)[ \-](v?[\d.x+ /]+)(.*)/i.exec(result);
+		let label: string = null;
 		let semver: string = null;
-		let label: string = arr[0];
 		if (match) {
 			label = match[1];
-			semver = match[2];
+			// If the version number is in the middle of the label, concatenate the disconnected part
+			if (match[3]) {
+				label += ' ' + match[3];
+			}
+			label = label.trim();
+			semver = match[2].trim();
+		} else {
+			label = result;
 		}
 		return {
-			name: label + (arr[1] ? ' (' + arr[1].join(', ') + ')' : ''),
+			name: label,
 			version: semver
 		};
 	})
