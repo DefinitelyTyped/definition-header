@@ -85,7 +85,7 @@ export let label: P.Parser<model.Label> = P
 	// Grab the rest of the line
     .then(untilEndOfLine)
 	.map((result) => {
-		// Label is everything that is not the version number
+		// Name is everything that is not the version number
 		// Version number is separated from the label by a space
 		// - Expected format is MAJOR.MINOR but authors might deviate from it
 		// - Can be omitted
@@ -94,23 +94,31 @@ export let label: P.Parser<model.Label> = P
 		// - Can have trailing '+'
 		// - Can be in the middle of the label
 		// - Can indicate multiple versions (e.g. '1.10.x / 2.0.x')
-		let match = /(.*)[ \-](v?[\d.x+ /]+)(.*)/i.exec(result);
-		let label: string = null;
-		let semver: string = null;
-		if (match) {
-			label = match[1];
-			// If the version number is in the middle of the label, concatenate the disconnected part
-			if (match[3]) {
-				label += ' ' + match[3];
+		const matchVersion = /(?:[\- ])(v?[\d.x+]{2,})/ig;
+
+		let start = result.length - 1;
+		let end = 0;
+		let match;
+		while ((match = matchVersion.exec(result)) !== null) {
+			if (match.index < start) {
+				start = match.index;
 			}
-			label = label.trim();
-			semver = match[2].trim();
-		} else {
-			label = result;
+			end = matchVersion.lastIndex;
 		}
+
+		let name = result;
+		let version: string | null = null;
+
+		if (start < end) {
+			const nameStart = result.slice(0, start).trim();
+			version = result.slice(start + 1, end);
+			const nameEnd = result.slice(end).trim();
+			name = nameStart + ' ' + nameEnd;
+		}
+
 		return {
-			name: label,
-			version: semver
+			name: name.trim(),
+			version: version
 		};
 	})
 	.skip(optTabSpace);
