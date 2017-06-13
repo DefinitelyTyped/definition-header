@@ -2,9 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as util from 'util';
 
-import * as P from 'parsimmon';
 import * as glob from 'glob';
 import * as sms from 'source-map-support';
 
@@ -24,7 +22,7 @@ describe('full repo', () => {
 		return;
 	}
 
-	let files = glob.sync('*/*.d.ts', {
+	let files = glob.sync('types/*/index.d.ts', {
 		cwd: repoDir
 	});
 
@@ -40,10 +38,10 @@ describe('full repo', () => {
 				if (DH.isPartial(sourceData)) {
 					return;
 				}
-				console.log(DH.utils.linkPos(targetPath, result.line, result.column, true));
+				console.log(DH.utils.linkPos(targetPath, result.line, result.column));
 				console.log('\n' + result.details + '\n');
 			}
-			assert.isTrue(result.success);
+			assert.isTrue(result.success, result.message);
 		});
 	});
 });

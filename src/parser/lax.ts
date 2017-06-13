@@ -59,45 +59,66 @@ let separatorProject = P.seq(P.string(','), space)
 		).or(optTabSpace))
 );
 
-export let person: P.Parser<model.Person> = P.seq(
-		nameUTF,
-		space.then(urlBracket)
+let untilEndOfLine = P.takeWhile(c => {
+	return c !== '\r' &&
+		c !== '\n';
+});
+
+export let person: P.Parser<model.Person> = P
+	.seq(
+		// name: Grab everything up to the URL bracket
+		P.takeWhile(c => c !== '<').skip(P.string('<')),
+		// url: Grab everything between the URL brackets
+		P.takeWhile(c => c !== '>').skip(P.string('>'))
 	)
 	.map((arr) => {
 		return {
-			name: arr[0],
+			name: arr[0].trim(),
 			url: arr[1] ? utils.untrail(arr[1]) : null
 		};
 	})
 	.skip(optTabSpace);
 
-export let label: P.Parser<model.Label> = P.string('// Type definitions for ')
-	.then(P.seq(
-		id,
-		space.then(
-			P.string('(')
-				.then(P.seq(
-					id,
-					P.string(', ').then(id).many()
-				).map((arr: any[]) => {
-					return [arr[0]].concat(arr[1]);
-				}))
-				.skip(P.string(')'))
-		)
-		.or(P.succeed(null))
-	))
-	.map((arr: any[]) => {
-		regex.semverExtract.lastIndex = 0;
-		let match = regex.semverExtract.exec(arr[0]);
-		let semver: string = null;
-		let label: string = arr[0];
-		if (match) {
-			label = match[1];
-			semver = match[2];
+export let label: P.Parser<model.Label> = P
+	// Starts with '// Type definitions for '
+	.string('// Type definitions for ')
+	// Grab the rest of the line
+    .then(untilEndOfLine)
+	.map((result) => {
+		// Name is everything that is not the version number
+		// Version number is separated from the label by a space
+		// - Expected format is MAJOR.MINOR but authors might deviate from it
+		// - Can be omitted
+		// - Can have leading 'v'
+		// - Can have trailing 'x'
+		// - Can have trailing '+'
+		// - Can be in the middle of the label
+		// - Can indicate multiple versions (e.g. '1.10.x / 2.0.x')
+		const matchVersion = /(?:[\- ])(v?[\d.x+]{2,})/ig;
+
+		let start = result.length - 1;
+		let end = 0;
+		let match;
+		while ((match = matchVersion.exec(result)) !== null) {
+			if (match.index < start) {
+				start = match.index;
+			}
+			end = matchVersion.lastIndex;
 		}
+
+		let name = result;
+		let version: string | null = null;
+
+		if (start < end) {
+			const nameStart = result.slice(0, start).trim();
+			version = result.slice(start + 1, end);
+			const nameEnd = result.slice(end).trim();
+			name = nameStart + ' ' + nameEnd;
+		}
+
 		return {
-			name: label + (arr[1] ? ' (' + arr[1].join(', ') + ')' : ''),
-			version: semver
+			name: name.trim(),
+			version: version
 		};
 	})
 	.skip(optTabSpace);
@@ -119,30 +140,37 @@ export let project: P.Parser<model.Project[]> = P.string('// Project: ')
 		});
 		return ret;
 	})
-	.skip(optTabSpace);
+	.skip(untilEndOfLine);
+
+let multilineAuthorsSeparator = P.seq(
+	// Line can end with optional comma followed by any number of spaces and tabs
+	optComma, optTabSpace,
+	// Check if there's more authors
+	linebreak.notFollowedBy(P.string('// Definitions: ')),
+	// Grab the beginning of the line up to the start of the next author
+	comment, optTabSpace
+).map(result => result.join(''));
+// Authors can be separated on the same line by a comma followed by any number of spaces and tabs
+let sameLineAuthorsSeparator = P.seq(
+	P.string(','), optTabSpace
+).map(result => result.join(''));
 
 export let authors: P.Parser<model.Author[]> = P.string('// Definitions by: ')
-	.then(P.alt(
-		P.seq(
-			person.notFollowedBy(separatorComma),
-			linebreak.skip(P.string('//                 ')).then(person).many()
-		),
-		P.seq(
-			person,
-			separatorComma.then(person).many()
-		)))
-	.map((arr) => {
-		let ret = <model.Author[]> arr[1];
-		ret.unshift(<model.Author> arr[0]);
-		return ret;
-	})
-	.skip(optTabSpace);
+    .then(P.sepBy(
+		person,
+		P.alt(
+			// Multi-line must go first or else same-line will eat its optional comma
+			multilineAuthorsSeparator,
+			sameLineAuthorsSeparator
+		)
+	))
+    .skip(optTabSpace);
 
 export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
-	.then(url)
-	.map((url) => {
+    .then(untilEndOfLine)
+    .map((url) => {
 		return {
-			url: utils.untrail(url)
+			url: utils.untrail(url.replace(/\s/, ''))
 		};
 	})
 	.skip(optTabSpace);
