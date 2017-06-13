@@ -77,9 +77,10 @@ describe('partials', () => {
 			name: 'Angular JS (ui.router module)',
 			version: '1.2'
 		});
+		// If we keep '.x' as part of the version number, we should keep '+' too.
 		assertPart(DH.parts.label, 'label-plus', {
 			name: 'Angular JS',
-			version: '1.2'
+			version: '1.2+'
 		});
 		assertPart(DH.parts.label, 'label-simple', {
 			name: 'FooModule',

@@ -40,7 +40,7 @@ export function parse(source: string): Result {
 	ret.line = result.index.line;
 	ret.column = result.index.column;
 
-	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + (ret.line + 1) + ', column ' + (ret.column + 1);
+	ret.message = 'expected ' + result.expected[0].replace(/"/, '\"') + ' at line ' + ret.line + ', column ' + ret.column;
 
 	let details = '';
 
