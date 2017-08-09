@@ -177,7 +177,7 @@ export let repo: P.Parser<model.Repository> = P.string('// Definitions: ')
 
 export let header: P.Parser<model.Header> = bomOpt
 	.then(P.seq(
-		label.skip(linebreak),
+		label.skip(linebreak).or(P.of(null)),
 		project.skip(linebreak),
 		authors.skip(linebreak),
 		repo.skip(linebreak)
